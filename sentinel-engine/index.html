@@ -1,1 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sentinel Engine — Automated airdrop farming with institutional-grade security</title>
+<meta name="description" content="Fully automated airdrop farming across 8 chains. Six security gates. Your Vault address is never connected. Waitlist open now.">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #ffffff; --bg2: #f7f7f5; --bg3: #f0efea;
+    --text: #1a1a18; --text2: #5f5e5a; --text3: #9a9994;
+    --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.18);
+    --blue: #185FA5; --blue-bg: #E6F1FB; --blue-dark: #0C447C;
+    --blue-mid: #378ADD; --blue-light: #B5D4F4;
+    --green: #1D9E75; --green-bg: #E1F5EE; --green-dark: #085041;
+    --red: #E24B4A; --amber: #EF9F27;
+    --radius: 8px; --radius-lg: 12px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1a18; --bg2: #232320; --bg3: #2a2a26;
+      --text: #f0efea; --text2: #9a9994; --text3: #5f5e5a;
+      --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.18);
+      --blue-bg: #042C53; --blue-dark: #B5D4F4; --blue-mid: #85B7EB;
+      --green-bg: #04342C; --green-dark: #9FE1CB;
+    }
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg3); color: var(--text); font-size: 15px; line-height: 1.6; }
+  .page { max-width: 860px; margin: 0 auto; padding: 0 20px; }
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 20px 0 24px; border-bottom: 0.5px solid var(--border); margin-bottom: 40px; }
+  .logo { font-size: 17px; font-weight: 600; letter-spacing: -0.02em; color: var(--text); text-decoration: none; }
+  .logo span { color: var(--blue-mid); }
+  .nav-links { display: flex; gap: 6px; align-items: center; }
+  .nav-links a { font-size: 13px; color: var(--text2); text-decoration: none; padding: 6px 12px; border-radius: var(--radius); }
+  .nav-links a:hover { background: var(--bg2); }
+  .btn { display: inline-block; font-size: 13px; padding: 8px 18px; border-radius: var(--radius); border: 0.5px solid var(--border2); background: var(--bg); color: var(--text); text-decoration: none; cursor: pointer; font-family: inherit; transition: background 0.15s; }
+  .btn:hover { background: var(--bg2); }
+  .btn-primary { background: var(--blue); color: #fff; border-color: var(--blue); font-size: 14px; padding: 10px 22px; }
+  .btn-primary:hover { background: var(--blue-dark); }
+  .hero { margin-bottom: 48px; border-bottom: 0.5px solid var(--border); padding-bottom: 48px; }
+  .hero-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 4px 14px; border-radius: 99px; background: var(--blue-bg); color: var(--blue-dark); margin-bottom: 20px; }
+  .hero-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
+  h1 { font-size: 34px; font-weight: 600; letter-spacing: -0.03em; line-height: 1.2; margin-bottom: 16px; }
+  h1 em { font-style: normal; color: var(--blue-mid); }
+  .hero-sub { font-size: 15px; color: var(--text2); line-height: 1.7; margin-bottom: 24px; }
+  .hero-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+  .hero-note { font-size: 12px; color: var(--text3); }
+  .wallet-box { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 20px; }
+  .wallet-box-title { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 16px; }
+  .wallet-node { border-radius: var(--radius); padding: 12px 14px; margin-bottom: 4px; border-left: 3px solid transparent; }
+  .wallet-node.dirty { background: var(--bg2); border-left-color: var(--red); border-radius: 0; border-top-right-radius: var(--radius); border-bottom-right-radius: var(--radius); }
+  .wallet-node.transit { background: var(--bg2); border-left-color: var(--amber); border-radius: 0; border-top-right-radius: var(--radius); border-bottom-right-radius: var(--radius); }
+  .wallet-node.vault { background: var(--bg2); border-left-color: var(--green); border-radius: 0; border-top-right-radius: var(--radius); border-bottom-right-radius: var(--radius); }
+  .wn-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
+  .wn-name { font-size: 14px; font-weight: 600; }
+  .wn-desc { font-size: 12px; color: var(--text2); margin-top: 2px; }
+  .wallet-arrow { text-align: center; font-size: 12px; color: var(--text3); padding: 5px 0; }
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 48px; }
+  .stat { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 16px; text-align: center; }
+  .stat-val { font-size: 26px; font-weight: 600; }
+  .stat-label { font-size: 12px; color: var(--text2); margin-top: 4px; }
+  .section-title { font-size: 12px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 16px; }
+  .gates-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 48px; }
+  .gate { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 18px; }
+  .gate-num { font-size: 11px; color: var(--blue); background: var(--blue-bg); padding: 2px 9px; border-radius: 99px; display: inline-block; margin-bottom: 10px; font-weight: 600; }
+  .gate-title { font-size: 14px; font-weight: 600; margin-bottom: 7px; }
+  .gate-desc { font-size: 13px; color: var(--text2); line-height: 1.6; }
+  .vs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 48px; }
+  .vs-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 18px; }
+  .vs-card.them { border-left: 3px solid var(--red); border-radius: 0; border-top-right-radius: var(--radius-lg); border-bottom-right-radius: var(--radius-lg); }
+  .vs-card.us { border: 2px solid var(--blue-light); }
+  .vs-label { font-size: 12px; font-weight: 600; margin-bottom: 12px; }
+  .vs-item { display: flex; align-items: flex-start; gap: 8px; padding: 6px 0; border-bottom: 0.5px solid var(--border); font-size: 13px; color: var(--text2); line-height: 1.45; }
+  .vs-item:last-child { border: none; }
+  .vi-bad { color: var(--red); font-size: 15px; flex-shrink: 0; }
+  .vi-good { color: var(--green); font-size: 15px; flex-shrink: 0; }
+  .chains-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 48px; }
+  .chain-pill { font-size: 13px; padding: 5px 14px; border: 0.5px solid var(--border); border-radius: 99px; color: var(--text2); background: var(--bg); }
+  .chain-pill.live { background: var(--blue-bg); color: var(--blue-dark); border-color: var(--blue-light); }
+  .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 48px; }
+  .price-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 22px; }
+  .price-card.featured { border: 2px solid var(--blue-mid); }
+  .price-badge { font-size: 11px; background: var(--blue-bg); color: var(--blue-dark); padding: 3px 10px; border-radius: 99px; display: inline-block; margin-bottom: 12px; }
+  .price-name { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+  .price-amount { font-size: 30px; font-weight: 600; letter-spacing: -0.02em; }
+  .price-period { font-size: 12px; color: var(--text2); margin-bottom: 4px; }
+  .price-onboard { font-size: 12px; color: var(--text3); margin-bottom: 18px; }
+  .price-features { list-style: none; margin-bottom: 20px; }
+  .price-features li { font-size: 13px; color: var(--text2); padding: 6px 0; border-bottom: 0.5px solid var(--border); display: flex; align-items: flex-start; gap: 8px; line-height: 1.4; }
+  .price-features li:last-child { border-bottom: none; }
+  .chk { color: var(--green); flex-shrink: 0; }
+  .xmk { color: var(--text3); flex-shrink: 0; }
+  .price-btn { width: 100%; padding: 10px; border-radius: var(--radius); font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; }
+  .price-btn-b { border: none; background: var(--blue); color: #fff; }
+  .price-btn-b:hover { background: var(--blue-dark); }
+  .price-btn-o { border: 0.5px solid var(--border2); background: none; color: var(--text); }
+  .price-btn-o:hover { background: var(--bg2); }
+  .hunter-callout { background: var(--green-bg); border: 0.5px solid var(--green-dark); border-radius: var(--radius-lg); padding: 18px 22px; margin-bottom: 48px; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .hc-text { font-size: 14px; color: var(--green-dark); line-height: 1.55; }
+  .hc-text strong { font-weight: 600; }
+  .hc-btn { font-size: 13px; padding: 8px 18px; border-radius: var(--radius); border: 0.5px solid var(--green-dark); background: none; color: var(--green-dark); cursor: pointer; white-space: nowrap; text-decoration: none; display: inline-block; }
+  footer { border-top: 0.5px solid var(--border); padding: 24px 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+  .footer-logo { font-size: 14px; font-weight: 600; }
+  .footer-logo span { color: var(--blue-mid); }
+  .footer-note { font-size: 12px; color: var(--text3); }
+  .footer-link { font-size: 12px; color: var(--text2); text-decoration: none; margin-left: 16px; }
+  .waitlist-form { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .waitlist-input { flex: 1; min-width: 200px; padding: 9px 14px; border-radius: var(--radius); border: 0.5px solid var(--border2); background: var(--bg); color: var(--text); font-size: 13px; font-family: inherit; }
+  .waitlist-input:focus { outline: none; border-color: var(--blue-mid); }
+  .waitlist-btn { padding: 9px 20px; border-radius: var(--radius); border: none; background: var(--blue); color: #fff; font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; }
+  @media (max-width: 600px) {
+    h1 { font-size: 26px; }
+    .hero-inner, .vs-grid { grid-template-columns: 1fr; }
+    .stats-row, .gates-grid, .pricing-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
 
+  <nav>
+    <a href="/" class="logo">Sentinel<span>.</span></a>
+    <div class="nav-links">
+      <a href="#security">Security</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#waitlist" class="btn">Join waitlist</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-badge">Managed airdrop farming &middot; 6 security gates &middot; Your keys never leave you</div>
+    <div class="hero-inner">
+      <div>
+        <h1>Automated farming.<br><em>Without</em> the risk.</h1>
+        <p class="hero-sub">Sentinel farms airdrops across 8 chains continuously — vetting every protocol through 6 security gates before your wallet touches anything. Your Vault address is structurally impossible to connect to the engine.</p>
+        <div class="hero-actions">
+          <a href="#waitlist" class="btn btn-primary">Join the waitlist</a>
+          <a href="#security" class="btn">See how security works</a>
+        </div>
+        <p class="hero-note">Testing completes June 2026 &middot; First 50 accounts now open</p>
+      </div>
+      <div class="wallet-box">
+        <div class="wallet-box-title">Three-wallet air-gap architecture</div>
+        <div class="wallet-node dirty">
+          <div class="wn-label">Layer 1 &mdash; Burner</div>
+          <div class="wn-name">Trust Wallet</div>
+          <div class="wn-desc">Sentinel operates here only. Disposable. Max £50 gas at any time.</div>
+        </div>
+        <div class="wallet-arrow">tokens flow one way only &#8595;</div>
+        <div class="wallet-node transit">
+          <div class="wn-label">Layer 2 &mdash; Transit</div>
+          <div class="wn-name">Intermediate wallet</div>
+          <div class="wn-desc">Auto-sweep destination. Nothing connects here directly.</div>
+        </div>
+        <div class="wallet-arrow">manual transfer monthly &#8595;</div>
+        <div class="wallet-node vault">
+          <div class="wn-label">Layer 3 &mdash; Vault</div>
+          <div class="wn-name">Your MetaMask</div>
+          <div class="wn-desc">Never touched by the engine. Structurally impossible.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="stats-row">
+    <div class="stat"><div class="stat-val">6</div><div class="stat-label">Security gates per transaction</div></div>
+    <div class="stat"><div class="stat-val">8</div><div class="stat-label">Chains monitored</div></div>
+    <div class="stat"><div class="stat-val">26</div><div class="stat-label">Integrated modules</div></div>
+    <div class="stat"><div class="stat-val">0</div><div class="stat-label">Keys you hand over</div></div>
+  </div>
+
+  <div id="security">
+    <div class="section-title">Six security gates &mdash; all must pass before any transaction is signed</div>
+    <div class="gates-grid">
+      <div class="gate">
+        <div class="gate-num">Gate 1</div>
+        <div class="gate-title">Domain age check</div>
+        <div class="gate-desc">Sites under 30 days old are hard-blocked. Phishing sites are almost always on fresh domains. 30&ndash;90 days triggers a warning.</div>
+      </div>
+      <div class="gate">
+        <div class="gate-num">Gate 2</div>
+        <div class="gate-title">Lookalike detection</div>
+        <div class="gate-desc">PhishGuard compares every URL against the full DefiLlama protocol domain list using similarity scoring. Catches &ldquo;uniswop.io&rdquo; style clones.</div>
+      </div>
+      <div class="gate">
+        <div class="gate-num">Gate 3</div>
+        <div class="gate-title">GoPlus contract scan</div>
+        <div class="gate-desc">Every token contract scanned for honeypots, sell restrictions, hidden mints, blacklist functions, and proxy contract concealment.</div>
+      </div>
+      <div class="gate">
+        <div class="gate-num">Gate 4</div>
+        <div class="gate-title">Tenderly simulation</div>
+        <div class="gate-desc">Transaction dry-run before any signing. Every asset change inspected. Unexpected outflow from a burner wallet triggers immediate abort.</div>
+      </div>
+      <div class="gate">
+        <div class="gate-num">Gate 5</div>
+        <div class="gate-title">Permit() detection</div>
+        <div class="gate-desc">All six known permit() variants blocked at calldata level before nonce allocation. The number one drainer technique, stopped before it starts.</div>
+      </div>
+      <div class="gate">
+        <div class="gate-num">Gate 6</div>
+        <div class="gate-title">Gas ceiling</div>
+        <div class="gate-desc">Any transaction requiring over 500,000 gas is rejected. Legitimate airdrop claims never exceed this. Gas-guzzler drainers always do.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Sentinel vs other managed farming services</div>
+  <div class="vs-grid">
+    <div class="vs-card them">
+      <div class="vs-label" style="color:#A32D2D;">Other services (e.g. Speedrun Crypto)</div>
+      <div class="vs-item"><span class="vi-bad">&#10007;</span>Hand over your private keys</div>
+      <div class="vs-item"><span class="vi-bad">&#10007;</span>No pre-flight transaction simulation</div>
+      <div class="vs-item"><span class="vi-bad">&#10007;</span>Basic timing randomisation only</div>
+      <div class="vs-item"><span class="vi-bad">&#10007;</span>No protocol intelligence layer</div>
+      <div class="vs-item"><span class="vi-bad">&#10007;</span>Public mempool &mdash; MEV exposed</div>
+      <div class="vs-item"><span class="vi-bad">&#10007;</span>No permit() or honeypot detection</div>
+    </div>
+    <div class="vs-card us">
+      <div class="vs-label" style="color:#0C447C;">Sentinel</div>
+      <div class="vs-item"><span class="vi-good">&#10003;</span>Your Vault is structurally isolated &mdash; enforced in code</div>
+      <div class="vs-item"><span class="vi-good">&#10003;</span>Tenderly simulation before every signature</div>
+      <div class="vs-item"><span class="vi-good">&#10003;</span>Biometric behavioural jitter + full anti-Sybil stack</div>
+      <div class="vs-item"><span class="vi-good">&#10003;</span>Hunter AI intelligence layer built in</div>
+      <div class="vs-item"><span class="vi-good">&#10003;</span>Flashbots private RPC on Ethereum mainnet</div>
+      <div class="vs-item"><span class="vi-good">&#10003;</span>Permit() blocked + gas ceiling enforced</div>
+    </div>
+  </div>
+
+  <div class="section-title">Supported chains</div>
+  <div class="chains-row">
+    <span class="chain-pill live">Ethereum</span>
+    <span class="chain-pill live">Base</span>
+    <span class="chain-pill live">Arbitrum</span>
+    <span class="chain-pill live">Optimism</span>
+    <span class="chain-pill live">BNB Chain</span>
+    <span class="chain-pill live">Polygon</span>
+    <span class="chain-pill live">Monad testnet</span>
+    <span class="chain-pill live">MegaETH testnet</span>
+  </div>
+
+  <div id="pricing">
+    <div class="section-title">Managed service pricing</div>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="price-name">Starter</div>
+        <div class="price-amount">£99</div>
+        <div class="price-period">per month</div>
+        <div class="price-onboard">+ 0.1 ETH onboarding (one-time)</div>
+        <ul class="price-features">
+          <li><span class="chk">&#10003;</span>Up to 3 burner wallets</li>
+          <li><span class="chk">&#10003;</span>All 6 security gates</li>
+          <li><span class="chk">&#10003;</span>Daily faucet automation</li>
+          <li><span class="chk">&#10003;</span>Auto-sweep to transit wallet</li>
+          <li><span class="chk">&#10003;</span>Monthly performance report</li>
+          <li><span class="xmk">&#10007;</span>Hunter Pro intelligence</li>
+        </ul>
+        <button class="price-btn price-btn-o" onclick="joinWaitlist('starter')">Join waitlist</button>
+      </div>
+      <div class="price-card featured">
+        <div class="price-badge">Recommended</div>
+        <div class="price-name">Professional</div>
+        <div class="price-amount">£199</div>
+        <div class="price-period">per month</div>
+        <div class="price-onboard">+ 0.2 ETH onboarding (one-time)</div>
+        <ul class="price-features">
+          <li><span class="chk">&#10003;</span>Up to 10 burner wallets</li>
+          <li><span class="chk">&#10003;</span>All 6 security gates</li>
+          <li><span class="chk">&#10003;</span>Hunter Pro intelligence included</li>
+          <li><span class="chk">&#10003;</span>Multi-chain sweep via LiFi bridge</li>
+          <li><span class="chk">&#10003;</span>Flashbots MEV protection</li>
+          <li><span class="chk">&#10003;</span>Weekly performance dashboard</li>
+        </ul>
+        <button class="price-btn price-btn-b" onclick="joinWaitlist('professional')">Join waitlist</button>
+      </div>
+      <div class="price-card">
+        <div class="price-name">Fund</div>
+        <div class="price-amount">£499</div>
+        <div class="price-period">per month</div>
+        <div class="price-onboard">+ custom onboarding</div>
+        <ul class="price-features">
+          <li><span class="chk">&#10003;</span>Unlimited wallets</li>
+          <li><span class="chk">&#10003;</span>Custom scoring weightings</li>
+          <li><span class="chk">&#10003;</span>White-label dashboard</li>
+          <li><span class="chk">&#10003;</span>Priority protocol additions</li>
+          <li><span class="chk">&#10003;</span>Dedicated support line</li>
+          <li><span class="chk">&#10003;</span>Monthly tax reporting CSV</li>
+        </ul>
+        <button class="price-btn price-btn-o" onclick="joinWaitlist('fund')">Contact us</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="waitlist" style="background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:28px;margin-bottom:48px;">
+    <div style="font-size:16px;font-weight:600;margin-bottom:8px;">Join the waitlist</div>
+    <div style="font-size:14px;color:var(--text2);margin-bottom:20px;">Testing completes June 2026. First 50 managed accounts accepted. Enter your email to be notified when a place opens.</div>
+    <div class="waitlist-form">
+      <input type="email" class="waitlist-input" id="waitlist-email" placeholder="your@email.com">
+      <select class="waitlist-input" id="waitlist-tier" style="flex:0 0 160px;">
+        <option value="starter">Starter &mdash; £99/mo</option>
+        <option value="professional" selected>Professional &mdash; £199/mo</option>
+        <option value="fund">Fund &mdash; £499/mo</option>
+      </select>
+      <button class="waitlist-btn" onclick="submitWaitlist()">Join waitlist</button>
+    </div>
+    <div id="waitlist-confirm" style="font-size:13px;color:var(--green);margin-top:10px;display:none;">You're on the list. We'll email you when a place opens.</div>
+  </div>
+
+  <div class="hunter-callout">
+    <div class="hc-text"><strong>Not ready for managed farming?</strong> Hunter Intelligence is our standalone protocol scoring service &mdash; weekly ranked reports, conviction scores, and specific farming actions. No wallets, no automation, no custody. From £29/month.</div>
+    <a href="../hunter-intelligence/index.html" class="hc-btn">See Hunter Intelligence &#8594;</a>
+  </div>
+
+  <footer>
+    <div class="footer-logo">Sentinel<span>.</span></div>
+    <div>
+      <a href="../hunter-intelligence/index.html" class="footer-link">Hunter Intelligence</a>
+      <a href="mailto:shorgs67@icloud.com" class="footer-link">Contact</a>
+    </div>
+    <div class="footer-note">Your keys. Your custody. Always.</div>
+  </footer>
+
+</div>
+<script>
+function joinWaitlist(tier) {
+  document.getElementById('waitlist-tier').value = tier;
+  document.getElementById('waitlist').scrollIntoView({behavior:'smooth'});
+  setTimeout(()=>document.getElementById('waitlist-email').focus(), 400);
+}
+function submitWaitlist() {
+  const email = document.getElementById('waitlist-email').value.trim();
+  if (!email || !email.includes('@')) { alert('Please enter a valid email address.'); return; }
+  document.getElementById('waitlist-confirm').style.display = 'block';
+  document.getElementById('waitlist-email').value = '';
+}
+</script>
+</body>
+</html>
