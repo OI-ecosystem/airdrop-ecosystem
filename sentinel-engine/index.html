@@ -329,10 +329,23 @@ function joinWaitlist(tier) {
   setTimeout(()=>document.getElementById('waitlist-email').focus(), 400);
 }
 function submitWaitlist() {
+  const tier = document.getElementById("waitlist-tier").value;
   const email = document.getElementById('waitlist-email').value.trim();
   if (!email || !email.includes('@')) { alert('Please enter a valid email address.'); return; }
-  document.getElementById('waitlist-confirm').style.display = 'block';
-  document.getElementById('waitlist-email').value = '';
+  fetch('https://formspree.io/f/xbdbarjy', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email, tier: tier })
+  })
+  .then(response => {
+    if (response.ok) {
+      document.getElementById('waitlist-confirm').style.display = 'block';
+      document.getElementById('waitlist-email').value = '';
+    } else {
+      alert('Something went wrong. Please try again.');
+    }
+  })
+  .catch(() => alert('Something went wrong. Please try again.'));
 }
 </script>
 </body>
