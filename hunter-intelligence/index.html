@@ -701,7 +701,14 @@ function buildWhales(){
 }
 
 function subscribe(tier){
-  alert(`Stripe integration coming soon.\nTier: ${tier}\n\nEmail shorgs67@icloud.com to subscribe early.`);
+  if(tier==='standard'){
+    window.location.href='https://buy.stripe.com/b3e14m6kC2LX0SA92S2Ry00';
+  } else if(tier==='pro'){
+    window.location.href='https://buy.stripe.com/28E6o66kC3Q1dFe4MC2Ry01';
+  } else {
+    // free tier - scroll to top
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
 }
 
 buildTable();
