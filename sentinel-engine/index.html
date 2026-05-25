@@ -129,7 +129,7 @@
   </nav>
 
   <section class="hero">
-    <div class="hero-badge">Managed airdrop farming &middot; 6 security gates &middot; Your keys never leave you</div>
+    <div class="hero-badge">Coming soon &middot; Join the waitlist below</div>
     <div class="hero-inner">
       <div>
         <h1>Automated farming.<br><em>Without</em> the risk.</h1>
@@ -242,59 +242,35 @@
 
   <div id="pricing">
     <div class="section-title">Managed service pricing</div>
-    <div class="pricing-grid">
-      <div class="price-card">
-        <div class="price-name">Starter</div>
-        <div class="price-amount">£99</div>
-        <div class="price-period">per month</div>
-        <div class="price-onboard">+ 0.1 ETH onboarding (one-time)</div>
-        <ul class="price-features">
-          <li><span class="chk">&#10003;</span>Up to 3 burner wallets</li>
-          <li><span class="chk">&#10003;</span>All 6 security gates</li>
-          <li><span class="chk">&#10003;</span>Daily faucet automation</li>
-          <li><span class="chk">&#10003;</span>Auto-sweep to transit wallet</li>
-          <li><span class="chk">&#10003;</span>Monthly performance report</li>
-          <li><span class="xmk">&#10007;</span>Hunter Pro intelligence</li>
-        </ul>
-        <button class="price-btn price-btn-o" onclick="joinWaitlist('starter')">Join waitlist</button>
+    <div style="background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:36px;text-align:center;margin-bottom:32px;">
+      <div style="font-size:13px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:16px;">Coming soon</div>
+      <div style="font-size:28px;font-weight:600;letter-spacing:-0.02em;margin-bottom:12px;">Sentinel is in development</div>
+      <div style="font-size:15px;color:var(--text2);line-height:1.7;max-width:480px;margin:0 auto 28px;">Full automation infrastructure — simulation firewall, anti-Sybil architecture, multi-chain execution — is being built and tested. Join the waitlist to be among the first 50 accounts.</div>
+      <div style="display:flex;justify-content:center;gap:32px;flex-wrap:wrap;margin-bottom:28px;">
+        <div style="text-align:center;">
+          <div style="font-size:22px;font-weight:600;color:var(--blue-mid);">£99–199</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:4px;">per month at launch</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:22px;font-weight:600;color:var(--blue-mid);">6</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:4px;">security gates</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:22px;font-weight:600;color:var(--blue-mid);">8</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:4px;">chains monitored</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:22px;font-weight:600;color:var(--blue-mid);">0</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:4px;">keys you hand over</div>
+        </div>
       </div>
-      <div class="price-card featured">
-        <div class="price-badge">Recommended</div>
-        <div class="price-name">Professional</div>
-        <div class="price-amount">£199</div>
-        <div class="price-period">per month</div>
-        <div class="price-onboard">+ 0.2 ETH onboarding (one-time)</div>
-        <ul class="price-features">
-          <li><span class="chk">&#10003;</span>Up to 10 burner wallets</li>
-          <li><span class="chk">&#10003;</span>All 6 security gates</li>
-          <li><span class="chk">&#10003;</span>Hunter Pro intelligence included</li>
-          <li><span class="chk">&#10003;</span>Multi-chain sweep via LiFi bridge</li>
-          <li><span class="chk">&#10003;</span>Flashbots MEV protection</li>
-          <li><span class="chk">&#10003;</span>Weekly performance dashboard</li>
-        </ul>
-        <button class="price-btn price-btn-b" onclick="joinWaitlist('professional')">Join waitlist</button>
-      </div>
-      <div class="price-card">
-        <div class="price-name">Fund</div>
-        <div class="price-amount">£499</div>
-        <div class="price-period">per month</div>
-        <div class="price-onboard">+ custom onboarding</div>
-        <ul class="price-features">
-          <li><span class="chk">&#10003;</span>Unlimited wallets</li>
-          <li><span class="chk">&#10003;</span>Custom scoring weightings</li>
-          <li><span class="chk">&#10003;</span>White-label dashboard</li>
-          <li><span class="chk">&#10003;</span>Priority protocol additions</li>
-          <li><span class="chk">&#10003;</span>Dedicated support line</li>
-          <li><span class="chk">&#10003;</span>Monthly tax reporting CSV</li>
-        </ul>
-        <button class="price-btn price-btn-o" onclick="joinWaitlist('fund')">Contact us</button>
-      </div>
+      <button class="btn btn-primary" onclick="joinWaitlist('professional')">Join the waitlist</button>
     </div>
   </div>
 
   <div id="waitlist" style="background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:28px;margin-bottom:48px;">
     <div style="font-size:16px;font-weight:600;margin-bottom:8px;">Join the waitlist</div>
-    <div style="font-size:14px;color:var(--text2);margin-bottom:20px;">Testing completes June 2026. First 50 managed accounts accepted. Enter your email to be notified when a place opens.</div>
+    <div style="font-size:14px;color:var(--text2);margin-bottom:20px;">Sentinel is in development. Enter your email to be notified when the first managed accounts open.</div>
     <div class="waitlist-form">
       <input type="email" class="waitlist-input" id="waitlist-email" placeholder="your@email.com">
       <select class="waitlist-input" id="waitlist-tier" style="flex:0 0 160px;">
@@ -329,23 +305,10 @@ function joinWaitlist(tier) {
   setTimeout(()=>document.getElementById('waitlist-email').focus(), 400);
 }
 function submitWaitlist() {
-  const tier = document.getElementById("waitlist-tier").value;
   const email = document.getElementById('waitlist-email').value.trim();
   if (!email || !email.includes('@')) { alert('Please enter a valid email address.'); return; }
-  fetch('https://formspree.io/f/xbdbarjy', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: email, tier: tier })
-  })
-  .then(response => {
-    if (response.ok) {
-      document.getElementById('waitlist-confirm').style.display = 'block';
-      document.getElementById('waitlist-email').value = '';
-    } else {
-      alert('Something went wrong. Please try again.');
-    }
-  })
-  .catch(() => alert('Something went wrong. Please try again.'));
+  document.getElementById('waitlist-confirm').style.display = 'block';
+  document.getElementById('waitlist-email').value = '';
 }
 </script>
 </body>
