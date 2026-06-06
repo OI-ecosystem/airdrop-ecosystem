@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- Airdrop Ecosystem Landing Page -->
+  <url>
+    <loc>https://oi-ecosystem.github.io/airdrop-ecosystem/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Hunter Intelligence -->
+  <url>
+    <loc>https://oi-ecosystem.github.io/airdrop-ecosystem/hunter-intelligence/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Sentinel Engine -->
+  <url>
+    <loc>https://oi-ecosystem.github.io/airdrop-ecosystem/sentinel-engine/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+</urlset>
