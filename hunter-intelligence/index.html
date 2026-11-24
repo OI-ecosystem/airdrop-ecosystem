@@ -569,15 +569,15 @@ function bannerText(protocols, liveTvls){
   let s;
   if(urgent.length === 0){
     const top = protocols[0];
-    s = top ? `Highest conviction this scan: ${top.name} (${top.score}/100). No urgent deadlines flagged.`
-            : "Scan in progress.";
+    s = top ? `Live signal: ${top.name} leads at ${top.score}/100. No urgent deadlines this scan.`
+            : "Live signal: scan in progress.";
   } else {
     const named = urgent.slice(0,3).map(p=>{
       const d = p.deadline ? ` — ${p.deadline}` : "";
       return `${p.name} (${p.score}/100)${d}`;
     }).join(", ");
     const more = urgent.length > 3 ? ` +${urgent.length-3} more` : "";
-    s = `Urgent this scan: ${named}${more}.`;
+    s = `Live signal: ${named}${more} — flagged URGENT this scan.`;
   }
   if(liveTvls.length) s += ` Live TVL: ${liveTvls.join(", ")}.`;
   return s;
