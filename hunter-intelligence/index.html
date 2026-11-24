@@ -295,63 +295,70 @@ footer{border-top:0.5px solid var(--border);padding:24px 0;display:flex;justify-
 </div>
 
 <!-- ═══════════════════════════════════════════════════
-     TOOL 2: SNAPSHOT PROBABILITY SCORE
+     PRO TIER — IN DEVELOPMENT
 ═══════════════════════════════════════════════════ -->
 <div class="feature-section">
   <div class="feature-header">
-    <div class="section-title" style="margin-bottom:0;">Snapshot probability score</div>
-    <span class="feature-badge badge-pro">Pro</span>
+    <div class="section-title" style="margin-bottom:0;">Built on the archive</div>
+    <span class="feature-badge" style="background:#FAEEDA;color:#854F0B;">In development</span>
   </div>
-  <p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6;">The most expensive mistake in airdrop farming is farming heavily after the snapshot has already been taken. Hunter estimates snapshot probability using on-chain activity patterns, team communication analysis, token contract signals, and historical launch timing from comparable protocols.</p>
+  <p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6;">
+    Hunter has scored the same twenty protocols with the same model every six hours since August.
+    That record is the one thing in this market nobody can copy, buy or backfill &mdash; and it is what
+    the Pro tier is being built from. On-chain data is a commodity; a timestamped history of what
+    Hunter thought, and whether it was right, is not. These features arrive as the archive matures.
+  </p>
 
-  <div class="snapshot-grid" id="snapshot-grid"></div>
-  <div style="font-size:12px;color:var(--text3);margin-top:10px;">Scores updated weekly based on on-chain signals and team communications. 100% = snapshot almost certainly still upcoming. 0% = snapshot likely already taken.</div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════
-     TOOL 3: TVL CORRELATION MATRIX
-═══════════════════════════════════════════════════ -->
-<div class="feature-section">
-  <div class="feature-header">
-    <div class="section-title" style="margin-bottom:0;">TVL correlation matrix</div>
-    <span class="feature-badge badge-pro">Pro</span>
-  </div>
-  <p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6;">Which protocols move together? If Base TVL drops, do your other positions drop with it? This matrix shows 30-day TVL correlation across the top 10 protocols — helping you diversify your farming activity rather than accidentally concentrating risk.</p>
-
-  <div class="heatmap-wrap">
-    <div class="heatmap-title">30-day TVL correlation &mdash; top 10 protocols</div>
-    <div id="heatmap-container"></div>
-    <div class="legend-row">
-      <span style="font-size:12px;color:var(--text2);margin-right:4px;">Correlation:</span>
-      <div class="legend-item"><div class="legend-swatch" style="background:#0F6E56;"></div><span>Strong positive</span></div>
-      <div class="legend-item"><div class="legend-swatch" style="background:#9FE1CB;"></div><span>Mild positive</span></div>
-      <div class="legend-item"><div class="legend-swatch" style="background:var(--bg2);"></div><span>Neutral</span></div>
-      <div class="legend-item"><div class="legend-swatch" style="background:#F09595;"></div><span>Mild negative</span></div>
-      <div class="legend-item"><div class="legend-swatch" style="background:#A32D2D;"></div><span>Strong negative</span></div>
+  <div class="snapshot-grid">
+    <div class="snapshot-card">
+      <div class="snapshot-name">Score trajectory</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.6;">
+        The conviction curve for every protocol, scan by scan. Not where it stands &mdash;
+        which direction it has been moving, and for how long.
+      </div>
     </div>
-    <div class="heatmap-note">Green = protocols that tend to grow together. Red = protocols that move inversely. Diversify your farming across uncorrelated protocols to reduce cycle risk. Data sourced from DefiLlama 30-day TVL history.</div>
+    <div class="snapshot-card">
+      <div class="snapshot-name">Persistence</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.6;">
+        How many consecutive scans a protocol has held above threshold. Separates durable
+        opportunities from the ones that spike and vanish inside a week.
+      </div>
+    </div>
+    <div class="snapshot-card">
+      <div class="snapshot-name">Weekly movers</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.6;">
+        The largest conviction climbs and falls across the week, with the factor
+        that drove each change.
+      </div>
+    </div>
+    <div class="snapshot-card">
+      <div class="snapshot-name">Historical replay</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.6;">
+        What Hunter showed on any past date. Check the calls against what actually
+        happened, rather than taking anyone's word for it.
+      </div>
+    </div>
+    <div class="snapshot-card">
+      <div class="snapshot-name">Track record</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.6;">
+        Of protocols scored above 70, what proportion went on to distribute, and over
+        what timeframe. The number every alpha group avoids publishing.
+      </div>
+    </div>
+    <div class="snapshot-card">
+      <div class="snapshot-name">API access</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.6;">
+        All twenty scores, factor breakdowns and deadline fields as JSON, for
+        anyone running their own tooling against them.
+      </div>
+    </div>
   </div>
-</div>
 
-<!-- ═══════════════════════════════════════════════════
-     TOOL 4: WHALE WALLET TRACKER
-═══════════════════════════════════════════════════ -->
-<div class="feature-section">
-  <div class="feature-header">
-    <div class="section-title" style="margin-bottom:0;">Whale wallet activity feed</div>
-    <span class="feature-badge badge-pro">Pro</span>
+  <div style="font-size:12px;color:var(--text3);margin-top:12px;line-height:1.5;">
+    Pro is not yet available to buy. These features are in development against the live archive and
+    will open when each is real &mdash; not before. Everything shown elsewhere on this page is live
+    output from the current scan.
   </div>
-  <p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6;">Hunter monitors a curated list of known sophisticated airdrop farmer addresses on-chain. When smart money starts farming a protocol heavily, it usually means something. This is institutional flow tracking — applied to crypto airdrop farming.</p>
-
-  <div class="whale-filter" id="whale-filter">
-    <button class="whale-filter-btn active" onclick="filterWhale('all',this)">All activity</button>
-    <button class="whale-filter-btn" onclick="filterWhale('strong',this)">Strong signals</button>
-    <button class="whale-filter-btn" onclick="filterWhale('new',this)">New positions</button>
-  </div>
-
-  <div class="whale-feed" id="whale-feed"></div>
-
-  <div class="whale-disclaimer">Wallet addresses are publicly visible on-chain. Hunter curates addresses known to belong to sophisticated airdrop farmers based on historical performance. This is observational intelligence only — not investment advice. Do your own research before farming any protocol.</div>
 </div>
 
 <!-- PRICING -->
@@ -367,9 +374,8 @@ footer{border-top:0.5px solid var(--border);padding:24px 0;display:flex;justify-
         <li><span class="chk">&#10003;</span>Conviction scores</li>
         <li><span class="chk">&#10003;</span>Urgent deadline alerts</li>
         <li><span class="xmk">&#10007;</span>ROI calculator</li>
-        <li><span class="xmk">&#10007;</span>Snapshot probability</li>
-        <li><span class="xmk">&#10007;</span>Correlation matrix</li>
-        <li><span class="xmk">&#10007;</span>Whale tracker</li>
+        <li><span class="xmk">&#10007;</span>Score trajectory</li>
+        <li><span class="xmk">&#10007;</span>Historical replay</li>
       </ul>
       <button class="price-btn price-btn-o" onclick="subscribe('free')">Get started free</button>
     </div>
@@ -384,25 +390,28 @@ footer{border-top:0.5px solid var(--border);padding:24px 0;display:flex;justify-
         <li><span class="chk">&#10003;</span>Specific farming actions</li>
         <li><span class="chk">&#10003;</span>Gas cost ROI calculator</li>
         <li><span class="chk">&#10003;</span>Telegram weekly delivery</li>
-        <li><span class="xmk">&#10007;</span>Snapshot probability scores</li>
-        <li><span class="xmk">&#10007;</span>Whale tracker &amp; correlation</li>
-      </ul>
+                      </ul>
       <button class="price-btn price-btn-g" onclick="subscribe('standard')">Start Standard</button>
     </div>
     <div class="price-card">
       <div class="price-name">Pro</div>
       <div class="price-amount">£149</div>
-      <div class="price-period">per month &middot; cancel anytime</div>
+      <div class="price-period">per month &middot; not yet available</div>
       <ul class="price-features">
         <li><span class="chk">&#10003;</span>All 20 protocols ranked</li>
-        <li><span class="chk">&#10003;</span>Full 7-factor breakdowns</li>
-        <li><span class="chk">&#10003;</span>Snapshot probability scores</li>
-        <li><span class="chk">&#10003;</span>TVL correlation matrix</li>
-        <li><span class="chk">&#10003;</span>Whale wallet activity feed</li>
+        <li><span class="chk">&#10003;</span>Full factor breakdowns</li>
         <li><span class="chk">&#10003;</span>Mid-week urgent alerts</li>
+        <li><span class="chk">&#10003;</span>Score trajectory per protocol</li>
+        <li><span class="chk">&#10003;</span>Persistence &amp; weekly movers</li>
+        <li><span class="chk">&#10003;</span>Historical replay</li>
+        <li><span class="chk">&#10003;</span>Published track record</li>
         <li><span class="chk">&#10003;</span>API access to all scores</li>
       </ul>
-      <button class="price-btn price-btn-o" onclick="subscribe('pro')">Start Pro</button>
+      <button class="price-btn price-btn-o" disabled
+              style="opacity:0.55;cursor:not-allowed;">Launching soon</button>
+      <div style="font-size:11px;color:var(--text3);margin-top:8px;text-align:center;line-height:1.4;">
+        Built on the archive. Opens when each feature is real.
+      </div>
     </div>
   </div>
 </div>
@@ -444,64 +453,49 @@ footer{border-top:0.5px solid var(--border);padding:24px 0;display:flex;justify-
    page always renders something rather than an empty table.             */
 const FALLBACK_PROTOCOLS = [
   {name:"Miden",chain:"Ethereum ZK",permanent:false,urgent:true,deadline:"Snapshot closing",defillama:null,
-   gasUnits:120000,chainKey:"eth",snapshotProb:82,
-   factors:{timing:22,tvl:14,investors:18,team:12,social:4,onchain:8},
+   gasUnits:120000,chainKey:"eth",factors:{timing:22,tvl:14,investors:18,team:12,social:4,onchain:8},
    note:"ZK rollup. a16z + Coinbase. Snapshot closing — interact NOW."},
   {name:"MegaETH",chain:"MegaETH",permanent:false,urgent:true,deadline:"Daily check-in",defillama:null,
-   gasUnits:60000,chainKey:"l2",snapshotProb:91,
-   factors:{timing:20,tvl:12,investors:18,team:13,social:5,onchain:7},
+   gasUnits:60000,chainKey:"l2",factors:{timing:20,tvl:12,investors:18,team:13,social:5,onchain:7},
    note:"Real-time EVM. $107M raised. Daily check-in required."},
   {name:"Monad",chain:"Monad",permanent:false,urgent:false,deadline:null,defillama:null,
-   gasUnits:80000,chainKey:"l2",snapshotProb:88,
-   factors:{timing:19,tvl:11,investors:20,team:12,social:5,onchain:5},
+   gasUnits:80000,chainKey:"l2",factors:{timing:19,tvl:11,investors:20,team:12,social:5,onchain:5},
    note:"$244M raised. Testnet live. Faucet daily, swap on testnet DEX."},
   {name:"Base",chain:"Ethereum L2",permanent:true,urgent:false,deadline:null,defillama:"base",
-   gasUnits:65000,chainKey:"l2",snapshotProb:74,
-   factors:{timing:15,tvl:18,investors:18,team:8,social:4,onchain:4},
+   gasUnits:65000,chainKey:"l2",factors:{timing:15,tvl:18,investors:18,team:8,social:4,onchain:4},
    note:"Coinbase moat. 46% of all L2 TVL. Token rumoured 2026."},
   {name:"Polymarket",chain:"Polygon",permanent:true,urgent:false,deadline:null,defillama:"polymarket",
-   gasUnits:55000,chainKey:"polygon",snapshotProb:68,
-   factors:{timing:15,tvl:14,investors:16,team:10,social:5,onchain:5},
+   gasUnits:55000,chainKey:"polygon",factors:{timing:15,tvl:14,investors:16,team:10,social:5,onchain:5},
    note:"Token confirmed. $9B valuation. Make real predictions."},
   {name:"Morpho",chain:"Ethereum",permanent:true,urgent:false,deadline:null,defillama:"morpho",
-   gasUnits:140000,chainKey:"eth",snapshotProb:61,
-   factors:{timing:15,tvl:16,investors:18,team:8,social:3,onchain:3},
+   gasUnits:140000,chainKey:"eth",factors:{timing:15,tvl:16,investors:18,team:8,social:3,onchain:3},
    note:"$6.5B TVL. No token. Paradigm-backed. Supply USDC or WETH."},
   {name:"Aster Stage 6",chain:"BNB Chain",permanent:false,urgent:true,deadline:"June 4 2026",defillama:null,
-   gasUnits:70000,chainKey:"bnb",snapshotProb:45,
-   factors:{timing:18,tvl:10,investors:14,team:9,social:4,onchain:7},
+   gasUnits:70000,chainKey:"bnb",factors:{timing:18,tvl:10,investors:14,team:9,social:4,onchain:7},
    note:"Claim window closes June 4. PRIORITY: claim immediately."},
   {name:"Hyperliquid",chain:"HyperEVM",permanent:true,urgent:false,deadline:null,defillama:"hyperliquid",
-   gasUnits:50000,chainKey:"l2",snapshotProb:55,
-   factors:{timing:15,tvl:13,investors:14,team:10,social:4,onchain:5},
+   gasUnits:50000,chainKey:"l2",factors:{timing:15,tvl:13,investors:14,team:10,social:4,onchain:5},
    note:"40% supply reserved. Trade on HyperEVM, use Felix Protocol."},
   {name:"MetaMask",chain:"Ethereum",permanent:true,urgent:false,deadline:null,defillama:null,
-   gasUnits:95000,chainKey:"eth",snapshotProb:52,
-   factors:{timing:15,tvl:12,investors:16,team:10,social:4,onchain:4},
+   gasUnits:95000,chainKey:"eth",factors:{timing:15,tvl:12,investors:16,team:10,social:4,onchain:4},
    note:"30M+ users. No token. Use MetaMask Swaps regularly."},
   {name:"Aerodrome",chain:"Base",permanent:true,urgent:false,deadline:null,defillama:"aerodrome-v2",
-   gasUnits:72000,chainKey:"l2",snapshotProb:44,
-   factors:{timing:15,tvl:14,investors:12,team:9,social:4,onchain:5},
+   gasUnits:72000,chainKey:"l2",factors:{timing:15,tvl:14,investors:12,team:9,social:4,onchain:5},
    note:"Base dominant DEX. Lock veAERO, provide USDC/ETH liquidity."},
   {name:"Ink (Kraken)",chain:"Ethereum L2",permanent:true,urgent:false,deadline:null,defillama:null,
-   gasUnits:68000,chainKey:"l2",snapshotProb:79,
-   factors:{timing:16,tvl:10,investors:16,team:9,social:4,onchain:3},
+   gasUnits:68000,chainKey:"l2",factors:{timing:16,tvl:10,investors:16,team:9,social:4,onchain:3},
    note:"Confirmed $INK airdrop. Bridge to Ink L2."},
   {name:"Variational",chain:"Ethereum",permanent:false,urgent:false,deadline:null,defillama:null,
-   gasUnits:110000,chainKey:"eth",snapshotProb:83,
-   factors:{timing:19,tvl:8,investors:16,team:8,social:3,onchain:3},
+   gasUnits:110000,chainKey:"eth",factors:{timing:19,tvl:8,investors:16,team:8,social:3,onchain:3},
    note:"$11.8M Bain+Coinbase. 50% community allocation confirmed."},
   {name:"Farcaster",chain:"Base",permanent:true,urgent:false,deadline:null,defillama:null,
-   gasUnits:45000,chainKey:"l2",snapshotProb:41,
-   factors:{timing:15,tvl:8,investors:15,team:9,social:5,onchain:4},
+   gasUnits:45000,chainKey:"l2",factors:{timing:15,tvl:8,investors:15,team:9,social:5,onchain:4},
    note:"Post on Warpcast, collect frames, hold native NFTs."},
   {name:"Glider",chain:"Base",permanent:false,urgent:false,deadline:null,defillama:null,
-   gasUnits:60000,chainKey:"l2",snapshotProb:86,
-   factors:{timing:20,tvl:7,investors:16,team:7,social:3,onchain:2},
+   gasUnits:60000,chainKey:"l2",factors:{timing:20,tvl:7,investors:16,team:7,social:3,onchain:2},
    note:"a16z backed. Portfolio automation on Base. Points live."},
   {name:"Superposition",chain:"Arbitrum L2",permanent:false,urgent:false,deadline:null,defillama:null,
-   gasUnits:70000,chainKey:"l2",snapshotProb:77,
-   factors:{timing:19,tvl:6,investors:16,team:7,social:3,onchain:1},
+   gasUnits:70000,chainKey:"l2",factors:{timing:19,tvl:6,investors:16,team:7,social:3,onchain:1},
    note:"a16z/Coinbase/GSR backed. Below threshold — monitor only."},
 ];
 
@@ -612,9 +606,6 @@ async function buildTable(){
   table.innerHTML=html;
   window._protocols=protocols;
   updateROI();
-  buildSnapshots();
-  buildHeatmap();
-  buildWhales();
 }
 
 /* ── TOOL 1: ROI CALCULATOR ── */
@@ -647,116 +638,6 @@ function updateROI(){
 }
 
 /* ── TOOL 2: SNAPSHOT PROBABILITY ── */
-function buildSnapshots(){
-  const protocols=(window._protocols||ALL_PROTOCOLS.map(p=>({...p,score:baseScore(p)}))).slice(0,9);
-  let html="";
-  protocols.forEach(p=>{
-    const prob=p.snapshotProb||50;
-    const color=prob>=80?"#1D9E75":prob>=60?"#EF9F27":prob>=40?"#BA7517":"#E24B4A";
-    const bg=prob>=80?"#E1F5EE":prob>=60?"#FAEEDA":prob>=40?"#FAEEDA":"#FCEBEB";
-    const label=prob>=80?"Still open":prob>=60?"Likely open":prob>=40?"Uncertain":"Likely taken";
-    const signals=[];
-    if(p.urgent)signals.push({dot:"#1D9E75",text:"Active deadline signal"});
-    if(p.factors.onchain>=7)signals.push({dot:"#1D9E75",text:"High on-chain activity"});
-    if(p.factors.timing>=19)signals.push({dot:"#1D9E75",text:"Early in launch window"});
-    if(p.factors.social>=5)signals.push({dot:"#EF9F27",text:"Social activity elevated"});
-    if(p.snapshotProb<50)signals.push({dot:"#E24B4A",text:"Team comms gone quiet"});
-    if(signals.length===0)signals.push({dot:"#9a9994",text:"Monitoring signals"});
-    html+=`<div class="snap-card">
-      <div class="snap-name">${p.name}</div>
-      <div class="snap-prob-wrap">
-        <div class="snap-prob-circle" style="background:${bg};color:${color};">${prob}%</div>
-        <div class="snap-prob-text"><strong style="color:${color};">${label}</strong><br>snapshot probability</div>
-      </div>
-      <div class="snap-signals">${signals.slice(0,3).map(s=>`<div class="snap-signal"><div class="snap-dot" style="background:${s.dot};"></div>${s.text}</div>`).join("")}</div>
-    </div>`;
-  });
-  document.getElementById("snapshot-grid").innerHTML=html;
-}
-
-/* ── TOOL 3: CORRELATION HEATMAP ── */
-function buildHeatmap(){
-  const names=["Miden","MegaETH","Monad","Base","Polymarket","Morpho","Aster","Hyperliquid","MetaMask","Aerodrome"];
-  const short=["MDN","METH","MON","BASE","POLY","MRPH","ASTR","HYPL","META","AERO"];
-  const corr=[
-    [1.00, 0.82, 0.78, 0.41, 0.22, 0.18, 0.31, 0.29, 0.15, 0.38],
-    [0.82, 1.00, 0.85, 0.45, 0.28, 0.21, 0.35, 0.33, 0.18, 0.42],
-    [0.78, 0.85, 1.00, 0.49, 0.31, 0.24, 0.38, 0.36, 0.20, 0.46],
-    [0.41, 0.45, 0.49, 1.00, 0.68, 0.72, 0.44, 0.61, 0.55, 0.88],
-    [0.22, 0.28, 0.31, 0.68, 1.00, 0.58, 0.29, 0.51, 0.45, 0.62],
-    [0.18, 0.21, 0.24, 0.72, 0.58, 1.00, 0.25, 0.48, 0.41, 0.69],
-    [0.31, 0.35, 0.38, 0.44, 0.29, 0.25, 1.00, 0.32, 0.28, 0.41],
-    [0.29, 0.33, 0.36, 0.61, 0.51, 0.48, 0.32, 1.00, 0.39, 0.58],
-    [0.15, 0.18, 0.20, 0.55, 0.45, 0.41, 0.28, 0.39, 1.00, 0.51],
-    [0.38, 0.42, 0.46, 0.88, 0.62, 0.69, 0.41, 0.58, 0.51, 1.00],
-  ];
-  function cellColor(v){
-    if(v>=0.8)return{bg:"#0F6E56",color:"#E1F5EE"};
-    if(v>=0.6)return{bg:"#9FE1CB",color:"#085041"};
-    if(v>=0.4)return{bg:"#E1F5EE",color:"#085041"};
-    if(v>=0.2)return{bg:"var(--bg2)",color:"var(--text3)"};
-    if(v>0)return{bg:"var(--bg2)",color:"var(--text3)"};
-    if(v>=-0.2)return{bg:"#FAEEDA",color:"#854F0B"};
-    if(v>=-0.5)return{bg:"#F09595",color:"#791F1F"};
-    return{bg:"#A32D2D",color:"#FCEBEB"};
-  }
-  let t=`<table class="heatmap"><thead><tr><th></th>${short.map(s=>`<th>${s}</th>`).join("")}</tr></thead><tbody>`;
-  corr.forEach((row,i)=>{
-    t+=`<tr><th class="row-header">${short[i]}</th>`;
-    row.forEach((v,j)=>{
-      const c=cellColor(v);
-      const display=i===j?"—":v.toFixed(2);
-      t+=`<td style="background:${c.bg};color:${c.color};">${display}</td>`;
-    });
-    t+="</tr>";
-  });
-  t+="</tbody></table>";
-  document.getElementById("heatmap-container").innerHTML=t;
-}
-
-/* ── TOOL 4: WHALE TRACKER ── */
-const WHALE_EVENTS=[
-  {type:"new",signal:"strong",protocol:"Miden",action:"First interaction — deployed test contract",wallet:"0x7a3f...d291",time:"2h ago",icon:"🐋",detail:"Wallet with 14 successful airdrop claims entered Miden testnet. First interaction with this protocol."},
-  {type:"strong",signal:"strong",protocol:"MegaETH",action:"Daily check-in streak: 47 days",wallet:"0x2c81...f047",time:"6h ago",icon:"🐋",detail:"Known high-value farmer maintaining longest streak in monitored set. Consistent daily interaction pattern."},
-  {type:"new",signal:"strong",protocol:"Glider",action:"First interaction — points program",wallet:"0x9e44...8b12",time:"11h ago",icon:"🐳",detail:"Three separate sophisticated wallets all entered Glider on the same day. Coordinated entry pattern."},
-  {type:"strong",signal:"moderate",protocol:"Variational",action:"Increased trading volume 4x",wallet:"0x1f5c...a339",time:"18h ago",icon:"🐳",detail:"Wallet previously seen farming Arbitrum and Base airdrops significantly increased Variational activity."},
-  {type:"new",signal:"strong",protocol:"Superposition",action:"First interaction — liquidity provision",wallet:"0x8d2a...c773",time:"1d ago",icon:"🐋",detail:"Wallet with known a16z-adjacent farming history entered Superposition. Notable given protocol's below-threshold score."},
-  {type:"strong",signal:"moderate",protocol:"Ink (Kraken)",action:"Bridge + dApp interaction pattern",wallet:"0x3b9e...2f81",time:"1d ago",icon:"🐳",detail:"Systematic bridging and dApp interaction across 8 wallets in a known farming cluster. Standard pre-snapshot farming pattern."},
-];
-let currentFilter="all";
-function filterWhale(f,btn){
-  currentFilter=f;
-  document.querySelectorAll(".whale-filter-btn").forEach(b=>b.classList.remove("active"));
-  btn.classList.add("active");
-  buildWhales();
-}
-function buildWhales(){
-  const events=WHALE_EVENTS.filter(e=>{
-    if(currentFilter==="all")return true;
-    if(currentFilter==="strong")return e.signal==="strong";
-    if(currentFilter==="new")return e.type==="new";
-    return true;
-  });
-  let html="";
-  events.forEach(e=>{
-    const sigClass=e.signal==="strong"?"whale-strong":"whale-moderate";
-    const sigLabel=e.signal==="strong"?"Strong signal":"Moderate signal";
-    html+=`<div class="whale-event">
-      <div class="whale-icon" style="background:var(--bg2);">${e.icon}</div>
-      <div class="whale-body">
-        <div class="whale-title">${e.protocol} &mdash; ${e.action}</div>
-        <div class="whale-detail">${e.detail}</div>
-        <div class="whale-address">${e.wallet}</div>
-      </div>
-      <div class="whale-meta">
-        <div class="whale-time">${e.time}</div>
-        <div class="whale-signal ${sigClass}">${sigLabel}</div>
-      </div>
-    </div>`;
-  });
-  document.getElementById("whale-feed").innerHTML=html;
-}
-
 function subscribe(tier){
   if(tier==='standard'){
     window.location.href='https://buy.stripe.com/cNi3cucJ0gCN44M5QG2Ry02';
