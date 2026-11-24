@@ -14,7 +14,7 @@ Changes v1.5: Stripe URLs corrected from pasted text (not screenshot)
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Hunter Intelligence — AI-powered airdrop protocol scoring</title>
-<meta name="description" content="Weekly ranked intelligence reports for airdrop farming. 20 protocols scored using a 7-factor AI model. No wallet required.">
+<meta name="description" content="Weekly ranked intelligence reports for airdrop farming. 20 protocols scored every 6 hours on a 6-factor model. No wallet required.">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -119,47 +119,6 @@ h1 em{font-style:normal;color:var(--green);}
 .roi-slider{flex:1;}
 .roi-control-val{font-size:13px;font-weight:600;width:60px;text-align:right;}
 
-/* SNAPSHOT PROBABILITY */
-.snapshot-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
-.snap-card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px;}
-.snap-name{font-size:13px;font-weight:600;margin-bottom:10px;}
-.snap-prob-wrap{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
-.snap-prob-circle{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;}
-.snap-prob-text{font-size:12px;color:var(--text2);line-height:1.5;}
-.snap-signals{display:flex;flex-direction:column;gap:4px;}
-.snap-signal{font-size:11px;display:flex;align-items:center;gap:5px;color:var(--text2);}
-.snap-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
-
-/* CORRELATION HEATMAP */
-.heatmap-wrap{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:18px;overflow-x:auto;}
-.heatmap-title{font-size:13px;font-weight:600;margin-bottom:14px;}
-.heatmap-note{font-size:12px;color:var(--text2);margin-top:12px;line-height:1.5;}
-table.heatmap{border-collapse:collapse;font-size:11px;}
-table.heatmap th{font-weight:500;color:var(--text2);padding:4px 6px;text-align:center;}
-table.heatmap th.row-header{text-align:right;padding-right:10px;color:var(--text);font-weight:600;}
-table.heatmap td{width:32px;height:28px;text-align:center;border-radius:3px;font-size:11px;font-weight:500;}
-.legend-row{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:12px;color:var(--text2);}
-.legend-item{display:flex;align-items:center;gap:4px;}
-.legend-swatch{width:14px;height:14px;border-radius:2px;}
-
-/* WHALE TRACKER */
-.whale-feed{display:flex;flex-direction:column;gap:8px;}
-.whale-event{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;display:flex;align-items:center;gap:14px;}
-.whale-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
-.whale-body{flex:1;}
-.whale-title{font-size:13px;font-weight:600;margin-bottom:3px;}
-.whale-detail{font-size:12px;color:var(--text2);}
-.whale-meta{text-align:right;flex-shrink:0;}
-.whale-time{font-size:11px;color:var(--text3);}
-.whale-signal{font-size:11px;padding:2px 8px;border-radius:99px;margin-top:4px;display:inline-block;}
-.whale-strong{background:#EAF3DE;color:#3B6D11;}
-.whale-moderate{background:#FAEEDA;color:#854F0B;}
-.whale-address{font-family:monospace;font-size:11px;color:var(--text3);}
-.whale-filter{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
-.whale-filter-btn{font-size:12px;padding:4px 12px;border-radius:99px;border:0.5px solid var(--border2);background:none;color:var(--text2);cursor:pointer;font-family:inherit;}
-.whale-filter-btn.active{background:var(--bg2);color:var(--text);border-color:var(--border2);}
-.whale-disclaimer{font-size:12px;color:var(--text3);background:var(--bg2);border-radius:var(--radius);padding:10px 14px;margin-top:12px;line-height:1.55;}
-
 /* PRICING */
 .pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:48px;}
 .price-card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:20px;}
@@ -192,7 +151,6 @@ footer{border-top:0.5px solid var(--border);padding:24px 0;display:flex;justify-
   h1{font-size:28px;}
   .stats-row,.how-grid,.pricing-grid,.roi-grid,.snapshot-grid{grid-template-columns:1fr 1fr;}
   .p-tvl,.p-bar{display:none;}
-  .whale-event{flex-wrap:wrap;}
 }
 </style>
 </head>
@@ -216,9 +174,9 @@ footer{border-top:0.5px solid var(--border);padding:24px 0;display:flex;justify-
 </div>
 
 <section class="hero">
-  <div class="hero-badge">AI-powered &middot; Updated weekly &middot; 20 protocols scored</div>
+  <div class="hero-badge">AI-powered &middot; Rescored every 6 hours &middot; 20 protocols tracked</div>
   <h1>Stop guessing.<br>Farm with <em>conviction.</em></h1>
-  <p class="hero-sub">Hunter scores every major airdrop protocol using a 7-factor AI model — plus live ROI calculation, snapshot probability scoring, whale wallet tracking, and TVL correlation analysis. Tools hedge funds don't have.</p>
+  <p class="hero-sub">Hunter scores every major airdrop protocol on a 6-factor model, rescored every six hours and archived since August. Live TVL, gas-cost ROI per protocol, and a published record of what we said and when.</p>
   <div class="hero-actions">
     <a href="#pricing" class="btn btn-primary">Start free &mdash; top 3 protocols</a>
     <a href="#tools" class="btn">See the intelligence tools</a>
@@ -227,10 +185,10 @@ footer{border-top:0.5px solid var(--border);padding:24px 0;display:flex;justify-
 </section>
 
 <div class="stats-row">
-  <div class="stat"><div class="stat-val">20</div><div class="stat-label">Protocols scored weekly</div></div>
-  <div class="stat"><div class="stat-val">7</div><div class="stat-label">Scoring factors</div></div>
-  <div class="stat"><div class="stat-val" id="stat-above">14</div><div class="stat-label">Above threshold this week</div></div>
-  <div class="stat"><div class="stat-val" id="stat-urgent">3</div><div class="stat-label">Urgent signals this week</div></div>
+  <div class="stat"><div class="stat-val">20</div><div class="stat-label">Protocols scored</div></div>
+  <div class="stat"><div class="stat-val">6</div><div class="stat-label">Scoring factors</div></div>
+  <div class="stat"><div class="stat-val" id="stat-above">14</div><div class="stat-label">Above threshold</div></div>
+  <div class="stat"><div class="stat-val" id="stat-urgent">3</div><div class="stat-label">Urgent signals</div></div>
 </div>
 
 <div id="how">
@@ -243,13 +201,13 @@ footer{border-top:0.5px solid var(--border);padding:24px 0;display:flex;justify-
     </div>
     <div class="how-card">
       <div class="how-num">02</div>
-      <div class="how-title">7-factor scoring</div>
+      <div class="how-title">6-factor scoring</div>
       <div class="how-desc">Each protocol scored on timing, TVL trajectory, investor tier, team credibility, on-chain activity, social signal, and token confirmation hints. Reasoning shown, not just conclusions.</div>
     </div>
     <div class="how-card">
       <div class="how-num">03</div>
-      <div class="how-title">Four intelligence layers</div>
-      <div class="how-desc">Beyond scoring: live ROI calculator per protocol, snapshot probability scores, whale wallet activity feed, and TVL correlation matrix across all 20 protocols.</div>
+      <div class="how-title">A record, not a snapshot</div>
+      <div class="how-desc">Every scan is archived. Scores are kept with their timestamps, so past calls can be read back and checked against what actually happened — rather than quietly revised. Live gas-cost ROI per protocol sits alongside.</div>
     </div>
   </div>
 </div>
@@ -442,16 +400,10 @@ footer{border-top:0.5px solid var(--border);padding:24px 0;display:flex;justify-
   </div>
   <div class="faq-item">
     <div class="faq-q">How is Hunter different from Telegram alpha groups?</div>
-    <div class="faq-a">Alpha groups give tips from humans with unknown motivations. Hunter applies a consistent, transparent 7-factor scoring model to every protocol, plus quantitative tools — ROI calculation, snapshot probability, correlation analysis, and institutional flow tracking — that no alpha group provides.</div>
+    <div class="faq-a">Alpha groups give tips from humans with unknown motivations, and no record of what they said last month. Hunter applies the same transparent 6-factor model to every protocol every six hours, archives each result with its timestamp, and shows you a briefing from a week ago so you can judge the calls yourself.</div>
   </div>
-  <div class="faq-item">
-    <div class="faq-q">What is the snapshot probability score based on?</div>
-    <div class="faq-a">Four signals: on-chain activity patterns (unusual transaction spikes often precede snapshots), token contract deployment status, team communication analysis, and historical timing from comparable protocol launches. Combined into a single probability estimate updated weekly.</div>
-  </div>
-  <div class="faq-item">
-    <div class="faq-q">How are whale wallets identified?</div>
-    <div class="faq-a">Hunter curates addresses known to belong to sophisticated airdrop farmers based on their historical on-chain activity — wallets that have consistently received significant airdrop allocations. All activity is publicly visible on-chain. We observe and report; we never interact with those wallets.</div>
-  </div>
+  
+  
 </div>
 
 <footer>
@@ -488,9 +440,9 @@ const FALLBACK_PROTOCOLS = [
   {name:"Morpho",chain:"Ethereum",permanent:true,urgent:false,deadline:null,defillama:"morpho",
    gasUnits:140000,chainKey:"eth",factors:{timing:15,tvl:16,investors:18,team:8,social:3,onchain:3},
    note:"$6.5B TVL. No token. Paradigm-backed. Supply USDC or WETH."},
-  {name:"Aster Stage 6",chain:"BNB Chain",permanent:false,urgent:true,deadline:"June 4 2026",defillama:null,
+  {name:"Aster Stage 6",chain:"BNB Chain",permanent:false,urgent:false,deadline:null,defillama:null,
    gasUnits:70000,chainKey:"bnb",factors:{timing:18,tvl:10,investors:14,team:9,social:4,onchain:7},
-   note:"Claim window closes June 4. PRIORITY: claim immediately."},
+   note:"BNB Chain points programme. Claim window has closed."},
   {name:"Hyperliquid",chain:"HyperEVM",permanent:true,urgent:false,deadline:null,defillama:"hyperliquid",
    gasUnits:50000,chainKey:"l2",factors:{timing:15,tvl:13,investors:14,team:10,social:4,onchain:5},
    note:"40% supply reserved. Trade on HyperEVM, use Felix Protocol."},
@@ -609,6 +561,28 @@ async function fetchTvl(slug){
   catch(e){return null;}
 }
 
+/* Banner text is built from whatever the current scan actually flagged.
+   Previously this was a hardcoded string, which is how a deadline five
+   months past stayed on the page announcing itself as a live signal. */
+function bannerText(protocols, liveTvls){
+  const urgent = protocols.filter(p=>p.urgent);
+  let s;
+  if(urgent.length === 0){
+    const top = protocols[0];
+    s = top ? `Highest conviction this scan: ${top.name} (${top.score}/100). No urgent deadlines flagged.`
+            : "Scan in progress.";
+  } else {
+    const named = urgent.slice(0,3).map(p=>{
+      const d = p.deadline ? ` — ${p.deadline}` : "";
+      return `${p.name} (${p.score}/100)${d}`;
+    }).join(", ");
+    const more = urgent.length > 3 ? ` +${urgent.length-3} more` : "";
+    s = `Urgent this scan: ${named}${more}.`;
+  }
+  if(liveTvls.length) s += ` Live TVL: ${liveTvls.join(", ")}.`;
+  return s;
+}
+
 /* ── BUILD PROTOCOL TABLE ── */
 async function buildTable(){
   const table=document.getElementById("protocol-table");
@@ -626,10 +600,10 @@ async function buildTable(){
   document.getElementById("stat-urgent").textContent=urgent;
   const liveTvls=protocols.filter(p=>p.tvl).map(p=>p.name);
   if(liveTvls.length>0){
-    document.getElementById("live-banner-text").textContent=`Live signal: Miden snapshot closing (78/100), Aster Stage 6 closes June 4. Live TVL loaded for: ${liveTvls.join(", ")}.`;
+    document.getElementById("live-banner-text").textContent=bannerText(protocols,liveTvls);
     document.getElementById("tvl-note").textContent=`TVL data live from DefiLlama for ${liveTvls.length} protocols. Last fetched: ${new Date().toLocaleTimeString()}.`;
   } else {
-    document.getElementById("live-banner-text").textContent="Live signal: Miden snapshot closing (78/100), Aster Stage 6 closes June 4 — both flagged URGENT this week.";
+    document.getElementById("live-banner-text").textContent=bannerText(protocols,[]);
     document.getElementById("tvl-note").textContent="TVL data from DefiLlama. Refreshes every 6 hours.";
   }
   let html=`<div class="protocol-row header" style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;">
@@ -687,7 +661,6 @@ function updateROI(){
   document.getElementById("roi-grid").innerHTML=html;
 }
 
-/* ── TOOL 2: SNAPSHOT PROBABILITY ── */
 function subscribe(tier){
   if(tier==='standard'){
     window.location.href='https://buy.stripe.com/cNi3cucJ0gCN44M5QG2Ry02';
