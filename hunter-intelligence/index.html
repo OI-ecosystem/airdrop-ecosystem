@@ -262,6 +262,24 @@ footer{border-top:0.5px solid var(--border);padding:24px 0;display:flex;justify-
   <div class="tvl-note" id="tvl-note"></div>
 </div>
 
+<!-- THE BRIEFING — published on a seven-day delay -->
+<div class="feature-section" id="briefing-section" style="display:none;">
+  <div class="feature-header">
+    <div class="section-title" style="margin-bottom:0;">Last week's briefing</div>
+    <span class="feature-badge" style="background:#EAF3DE;color:#3B6D11;" id="briefing-date">&nbsp;</span>
+  </div>
+  <p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6;">
+    Hunter writes a briefing every six hours. We publish one here a week late, on purpose &mdash;
+    so you can read what it said, then look at the table above and judge for yourself whether it
+    was right. Subscribers get the current one.
+  </p>
+
+  <div class="heatmap-wrap">
+    <div id="briefing-text" style="font-size:14px;line-height:1.75;white-space:pre-wrap;"></div>
+    <div class="heatmap-note" id="briefing-foot"></div>
+  </div>
+</div>
+
 <!-- ═══════════════════════════════════════════════════
      TOOL 1: GAS COST ROI CALCULATOR
 ═══════════════════════════════════════════════════ -->
@@ -511,6 +529,9 @@ let ALL_PROTOCOLS = FALLBACK_PROTOCOLS;
 let DATA_SOURCE   = "bundled";
 let GENERATED_AT  = null;
 let AI_BRIEFING   = null;
+let BRIEFING_DELAYED      = null;
+let BRIEFING_DELAYED_SCAN = null;
+let BRIEFING_DELAYED_DAYS = 7;
 
 async function loadLiveScores(){
   try{
@@ -525,11 +546,40 @@ async function loadLiveScores(){
       DATA_SOURCE   = "live";
       GENERATED_AT  = d.generated_at || d.stored_at || null;
       AI_BRIEFING   = d.ai_briefing || null;
+      BRIEFING_DELAYED      = d.ai_briefing_delayed      || null;
+      BRIEFING_DELAYED_SCAN = d.ai_briefing_delayed_scan || null;
+      BRIEFING_DELAYED_DAYS = d.ai_briefing_delayed_days || 7;
     }
   }catch(e){
     console.log("[hunter] live feed unavailable, using bundled snapshot:", e.message);
   }
   renderDataStatus();
+  renderBriefing();
+}
+
+/* The public page shows the briefing from a week ago, with its date, so a
+   reader can check it against the current table. Hidden entirely until the
+   archive is deep enough to supply one — an empty panel says nothing. */
+function renderBriefing(){
+  if(!BRIEFING_DELAYED) return;
+  const sec = document.getElementById("briefing-section");
+  if(!sec) return;
+  document.getElementById("briefing-text").textContent = BRIEFING_DELAYED;
+  const scan = BRIEFING_DELAYED_SCAN || "";
+  const date = scan.slice(0,10);
+  if(date){
+    const d = new Date(date + "T00:00:00Z");
+    document.getElementById("briefing-date").textContent =
+      d.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
+  } else {
+    document.getElementById("briefing-date").textContent =
+      BRIEFING_DELAYED_DAYS + " days ago";
+  }
+  document.getElementById("briefing-foot").textContent =
+    "Written by Hunter " + BRIEFING_DELAYED_DAYS + " days ago, published unedited. "
+    + "Compare it against the rankings above — that comparison is the point. "
+    + "The current briefing, refreshed every six hours, goes to subscribers.";
+  sec.style.display = "";
 }
 
 function renderDataStatus(){
