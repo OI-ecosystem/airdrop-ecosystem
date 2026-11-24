@@ -440,7 +440,9 @@ footer{border-top:0.5px solid var(--border);padding:24px 0;display:flex;justify-
 
 <script>
 /* ── PROTOCOL DATA ── */
-const ALL_PROTOCOLS = [
+/* Bundled snapshot — used only if the live feed is unreachable, so the
+   page always renders something rather than an empty table.             */
+const FALLBACK_PROTOCOLS = [
   {name:"Miden",chain:"Ethereum ZK",permanent:false,urgent:true,deadline:"Snapshot closing",defillama:null,
    gasUnits:120000,chainKey:"eth",snapshotProb:82,
    factors:{timing:22,tvl:14,investors:18,team:12,social:4,onchain:8},
@@ -502,6 +504,51 @@ const ALL_PROTOCOLS = [
    factors:{timing:19,tvl:6,investors:16,team:7,social:3,onchain:1},
    note:"a16z/Coinbase/GSR backed. Below threshold — monitor only."},
 ];
+
+/* ── LIVE DATA ──────────────────────────────────────────────────────────
+   Pulls the current scan from the Hunter Intelligence engine (Hetzner,
+   every 6 hours) published via rcloop-proxy. If the endpoint is slow or
+   down, the bundled snapshot above is used and the page says so rather
+   than presenting stale data as current.                                */
+
+const SCORES_ENDPOINT = "https://rcloop-proxy.vercel.app/api/scores";
+
+let ALL_PROTOCOLS = FALLBACK_PROTOCOLS;
+let DATA_SOURCE   = "bundled";
+let GENERATED_AT  = null;
+let AI_BRIEFING   = null;
+
+async function loadLiveScores(){
+  try{
+    const ctrl = new AbortController();
+    const timer = setTimeout(()=>ctrl.abort(), 8000);
+    const r = await fetch(SCORES_ENDPOINT, {cache:"no-store", signal:ctrl.signal});
+    clearTimeout(timer);
+    if(!r.ok) throw new Error("HTTP "+r.status);
+    const d = await r.json();
+    if(d.status === "ok" && Array.isArray(d.protocols) && d.protocols.length){
+      ALL_PROTOCOLS = d.protocols;
+      DATA_SOURCE   = "live";
+      GENERATED_AT  = d.generated_at || d.stored_at || null;
+      AI_BRIEFING   = d.ai_briefing || null;
+    }
+  }catch(e){
+    console.log("[hunter] live feed unavailable, using bundled snapshot:", e.message);
+  }
+  renderDataStatus();
+}
+
+function renderDataStatus(){
+  const el = document.getElementById("data-status");
+  if(!el) return;
+  if(DATA_SOURCE === "live"){
+    el.textContent = "Live — last scan " + (GENERATED_AT || "just now");
+    el.style.color = "#639922";
+  } else {
+    el.textContent = "Last known snapshot — live feed unavailable";
+    el.style.color = "#BA7517";
+  }
+}
 
 /* ── SCORING HELPERS ── */
 function baseScore(p){const s=Object.values(p.factors).reduce((a,b)=>a+b,0);return p.permanent?Math.max(s,60):s;}
@@ -721,7 +768,7 @@ function subscribe(tier){
   }
 }
 
-buildTable();
+loadLiveScores().then(buildTable);
 </script>
 <script data-goatcounter="https://signal333.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
