@@ -504,7 +504,7 @@ def backfill(log, archive_dir=None, limit=None):
     if limit:
         files = files[-limit:]
 
-    total, prev, pv = 0, None, None
+    total, prev, pv, plv = 0, None, None, None
     for f in files:
         try:
             d = json.loads(f.read_text())
@@ -514,12 +514,23 @@ def backfill(log, archive_dir=None, limit=None):
         if not curr:
             continue
         cv = d.get("scoring_version") or (curr[0].get("scoring_version") if curr else None)
+        clv = d.get("protocol_list_version")
         if prev is not None:
+            # Both version pairs, always. This call site passed only the
+            # scoring versions while the live-scan call passed both, so a
+            # backfill replayed the 27 Nov list rewrite as 17 market
+            # events — ten score shifts and seven conviction changes that
+            # were nothing but our own factor edits — while the identical
+            # transition in a live scan was correctly suppressed. Two
+            # call sites, one updated: the suppression must not depend on
+            # which path happens to replay a transition.
             total += detect_events(log, prev, curr,
                                    scan_id=d.get("scan_id", f.stem),
                                    prev_scoring_version=pv,
-                                   curr_scoring_version=cv)
-        prev, pv = curr, cv
+                                   curr_scoring_version=cv,
+                                   prev_list_version=plv,
+                                   curr_list_version=clv)
+        prev, pv, plv = curr, cv, clv
     return total, len(files)
 
 

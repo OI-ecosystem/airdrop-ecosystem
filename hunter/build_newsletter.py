@@ -34,7 +34,16 @@ ARCHIVE = APP_DIR / "briefings"
 SCORES = APP_DIR / "hunter_scores.json"
 OUT_DIR = APP_DIR / "newsletters"
 
-NEWSLETTER_ENDPOINT = "https://rcloop-proxy.vercel.app/api/scores?view=newsletter"
+# Publishing to the proxy is OFF until a route exists to receive it.
+# The first version POSTed to /api/scores?view=newsletter — a route that
+# was never built; scores.js handles only view=trajectory. A client
+# written against an imagined server produced a 401 in every run and
+# made a healthy pipeline look broken. The issue does not need a push
+# anyway: hunter_app attaches the week-old issue from newsletters/ to
+# the scan payload, which is how the site serves it. Set
+# newsletter_endpoint in hunter_config.json if and when a real consumer
+# for the CURRENT issue exists (e.g. the subscriber mailer).
+NEWSLETTER_ENDPOINT = None
 AI_ENDPOINT = "https://rcloop-proxy.vercel.app/api/ai"
 def _config():
     """Read hunter_config.json, the same file hunter_app.py reads.
@@ -58,6 +67,12 @@ AI_ENABLED = CONFIG.get("ai_enabled", True)
 # Events worth leading on, most consequential first. Anything not listed
 # is supporting detail rather than a headline.
 LEAD_PRIORITY = [
+    # A claim deadline for holders outranks everything: it is the only
+    # kind of event where days matter and money is forfeited by inaction.
+    # Without it in this list the lead fell through to whatever came
+    # next — one issue led with "Superposition is no longer tracked"
+    # while Extended's signing cutoff sat three sections down.
+    "action_required",
     "distributed",
     "deadline_near",
     "candidate_cleared",
@@ -73,6 +88,9 @@ LEAD_PRIORITY = [
 KIND_LABEL = {
     "distributed":       "Distributed",
     "deadline_near":     "Closing soon",
+    "action_required":   "Act now",
+    "left_universe":     "No longer tracked",
+    "entered_universe":  "Now tracked",
     "deadline_set":      "Date confirmed",
     "deadline_passed":   "Window closed",
     "entered_universe":  "Now tracking",
@@ -261,9 +279,17 @@ def render_markdown(d, prose=None):
         for p in d["upcoming"]:
             days = p["days_remaining"]
             when = "today" if days == 0 else f"in {days} day{'s' if days != 1 else ''}"
-            L.append(f"- **{p['name']}** — {when}"
-                     f" ({p.get('deadline_iso') or p.get('deadline')})."
-                     f" Score {p.get('score')}.")
+            # Same distinction the event log draws: a date on a protocol
+            # whose entry has closed is a claim deadline for existing
+            # holders, not a window a reader can still get into.
+            if p.get("entry_window") == "closed":
+                L.append(f"- **{p['name']}** — claim deadline {when}"
+                         f" ({p.get('deadline_iso') or p.get('deadline')})."
+                         f" Entry closed; applies only if you already hold an allocation.")
+            else:
+                L.append(f"- **{p['name']}** — {when}"
+                         f" ({p.get('deadline_iso') or p.get('deadline')})."
+                         f" Score {p.get('score')}.")
         L.append("")
 
     interesting = [e for e in d["events"]
@@ -300,7 +326,10 @@ def render_markdown(d, prose=None):
         for p in d["top"]:
             c = p.get("confidence") or 0
             band = "Measured" if c >= 0.4 else ("Partial" if c > 0 else "Unvalidated")
-            L.append(f"| {p.get('rank')} | {p['name']} | {p.get('score')} | {band} |")
+            # Unranked protocols carry rank None on purpose; printing
+            # Python's None into a table is not the same as saying so.
+            rk = p.get('rank') or "\u2014"
+            L.append(f"| {rk} | {p['name']} | {p.get('score')} | {band} |")
         L.append("")
 
     L.append("---")
@@ -406,13 +435,18 @@ def _extract_text(body):
 
 
 def publish(payload):
+    endpoint = CONFIG.get("newsletter_endpoint") or NEWSLETTER_ENDPOINT
+    if not endpoint:
+        log("[Newsletter] no publish endpoint configured — issue saved "
+            "locally; the site receives it via the next scan's payload")
+        return
     try:
         import requests
     except ImportError:
         log("requests unavailable — not published", "WARN")
         return
     try:
-        r = requests.post(NEWSLETTER_ENDPOINT, json=payload,
+        r = requests.post(endpoint, json=payload,
                           headers={"Content-Type": "application/json",
                                    "X-Hunter-Key": HUNTER_KEY},
                           timeout=20)
