@@ -53,6 +53,16 @@ SCORE_SHIFT_MIN = 4        # points, against the last recorded shift
 TVL_SURGE_MIN   = 25.0     # percent, seven-day
 DEADLINE_NEAR_DAYS = 7
 
+# Scores before this date came from a model being actively rewritten:
+# the permanent floor was removed, the timing curve rebased, momentum
+# moved from absolute to market-relative. Movements across that window
+# describe our own edits, not the market.
+#
+# The scoring_version check cannot catch this alone, because archive
+# files written before schema 3.0 carry no version at all, so the entire
+# window reads as "unchanged". This date is the backstop.
+MODEL_STABLE_SINCE = "2026-11-25"
+
 VERIFIED   = "verified"      # from a primary source we queried
 DERIVED    = "derived"       # computed from data we hold
 UNVERIFIED = "unverified"    # reported, not yet confirmed
@@ -181,6 +191,54 @@ class EventLog:
                 "SELECT 1 FROM events WHERE protocol_id=? AND kind=? LIMIT 1",
                 (protocol_id, kind)).fetchone() is not None
 
+    # Event lifecycle.
+    #
+    # An event is a fact stamped at a moment, and the log is append-only,
+    # so a recorded deadline cannot be rewritten when its date passes.
+    # Status is therefore DERIVED at read time from the event's own date
+    # against today — never stored. The log keeps saying what was true
+    # when we saw it; the status says where that fact now stands.
+    #
+    # This is the distinction that matters for the archive: what Hunter
+    # believed, and what was actually happening, have to stay separately
+    # recoverable. Mutating the log to track lifecycle would collapse
+    # the two and make calibration against real outcomes impossible.
+    # Lifecycle and provenance are two independent axes and must not be
+    # collapsed. Provenance ("verified", "derived", "unverified") says
+    # how we came to know a thing: "derived" means we computed it from
+    # our own data, which is sound, not doubtful. Lifecycle says where
+    # the fact now stands in time. An event can perfectly well be
+    # derived AND completed.
+    #
+    # Only events that point at a future date have a lifecycle worth
+    # tracking. Everything else describes a moment that has already
+    # happened, so it is complete the instant it is recorded.
+    FORWARD_KINDS = {"deadline_set", "deadline_near"}
+
+    @staticmethod
+    def status_of(event, today=None):
+        """Lifecycle position: announced | upcoming | completed.
+
+        Derived from the event's own date, never stored — the log is
+        append-only, so a recorded deadline cannot be rewritten when
+        its date passes. The log keeps saying what was true when we
+        saw it; this says where that fact now stands.
+        """
+        if event.get("kind") not in EventLog.FORWARD_KINDS:
+            return "completed"
+        when = (event.get("occurred_at") or "")[:10]
+        if not when:
+            return "announced"
+        today = today or datetime.now(timezone.utc).date().isoformat()
+        if when < today:
+            return "completed"
+        try:
+            d = datetime.strptime(when, "%Y-%m-%d").date()
+            t = datetime.strptime(today, "%Y-%m-%d").date()
+        except ValueError:
+            return "announced"
+        return "upcoming" if (d - t).days <= 14 else "announced"
+
     def recent(self, days=7, kinds=None, limit=100):
         q = """SELECT * FROM events
                WHERE julianday('now') - julianday(detected_at) < ?"""
@@ -191,7 +249,10 @@ class EventLog:
         q += " ORDER BY detected_at DESC LIMIT ?"
         args.append(limit)
         with self._conn() as c:
-            return [dict(r) for r in c.execute(q, args).fetchall()]
+            rows = [dict(r) for r in c.execute(q, args).fetchall()]
+        for r in rows:
+            r["status"] = self.status_of(r)
+        return rows
 
     def for_protocol(self, protocol_id, limit=50):
         with self._conn() as c:
@@ -236,6 +297,10 @@ def detect_events(log, previous, current, scan_id=None,
         and curr_scoring_version is not None
         and prev_scoring_version != curr_scoring_version
     )
+    # Anything from before the model settled is our own editing, whatever
+    # the version fields say — and before schema 3.0 they say nothing.
+    if scan_id and str(scan_id)[:10] < MODEL_STABLE_SINCE:
+        model_changed = True
 
     for pid, c in curr.items():
         name = c.get("name", pid)

@@ -1,63 +1,57 @@
-# Hunter Intelligence — server modules
+# Hunter server modules — pull route
 
-Python modules that run on the Hetzner box at
-`/home/hunter/hunter-intelligence/`.
+The server is the source of truth. These files are published here so the
+server can pull them with `curl` instead of files being pushed through a
+browser's download folder, where same-named files collide silently and
+you end up running `hunter_events(3).py`.
 
-They live here so the server can pull them directly rather than being
-sent through a browser download and an scp. Downloading by hand produced
-`file (1).py`, `file (2).py` and a run against the wrong bytes more than
-once; a checksum the server can verify against a known source removes
-that whole class of problem.
+## Pull
 
-## Pulling
+    cd /home/hunter/hunter-intelligence
+    BASE=https://raw.githubusercontent.com/oi-ecosystem/airdrop-ecosystem/main/hunter
 
-On the server:
+    # Back up first — hunter_app.py is replaced whole, not patched
+    for f in hunter_app.py hunter_events.py build_newsletter.py; do
+      [ -f "$f" ] && cp "$f" "$f.bak-$(date +%F-%H%M)"
+    done
 
-```bash
-cd /home/hunter/hunter-intelligence
-curl -sfO https://raw.githubusercontent.com/oi-ecosystem/airdrop-ecosystem/main/hunter/hunter_events.py
-chown hunter:hunter hunter_events.py
-```
+    for f in hunter_app.py hunter_events.py hunter_feed.py \
+             build_newsletter.py build_trajectory.py; do
+      curl -fsSL "$BASE/$f" -o "$f"
+    done
 
-Several at once:
+    curl -fsSL "$BASE/CHECKSUMS" -o /tmp/CHECKSUMS
+    md5sum -c /tmp/CHECKSUMS
 
-```bash
-cd /home/hunter/hunter-intelligence
-for f in hunter_feed.py hunter_events.py build_trajectory.py; do
-  curl -sfO "https://raw.githubusercontent.com/oi-ecosystem/airdrop-ecosystem/main/hunter/$f"
-done
-chown hunter:hunter *.py
-```
+Every line must say `OK`. If any says `FAILED`, restore the `.bak-*` file
+and stop — a half-applied update is worse than an old one.
 
-## Verifying you have what you think you have
+## Before you pull: the safety check
 
-`CHECKSUMS` holds the md5 of each file as committed. After pulling:
+`hunter_app.py` is replaced in full this time, because the change touches
+the output assembly and a patcher would be more fragile than a swap. So
+confirm the file you are replacing is the one this version was built
+from:
 
-```bash
-curl -sf https://raw.githubusercontent.com/oi-ecosystem/airdrop-ecosystem/main/hunter/CHECKSUMS -o /tmp/ck
-md5sum -c /tmp/ck 2>/dev/null | grep -v OK || echo "all files match"
-```
+    md5sum hunter_app.py
 
-Anything that does not print OK is not the file that was committed.
+Expected: `6c7b5bcf6101d721b59f3bcbecd202bc`
 
-## What is here
+If it matches, the swap is safe. If it does not, the server has changed
+since this build — stop and say so, because overwriting would discard
+whatever changed.
 
-| File | Purpose |
-|---|---|
-| `hunter_feed.py` | DefiLlama feed — TVL for protocols and chains, retirement detection by token symbol, market momentum, discovery and quarantine |
-| `hunter_events.py` | Event log — distributions, deadlines, universe changes, material score moves. Append-only, with archive backfill |
-| `build_trajectory.py` | Score history across the full briefings archive |
+## After pulling
 
-`hunter_app.py` is **not** here. It carries the hand-authored protocol
-list, which is editorial content rather than code, and it is patched in
-place on the server with a backup each time.
+    sudo -u hunter python3 -c "import ast,sys; [ast.parse(open(f).read()) for f in sys.argv[1:]]" \
+      hunter_app.py hunter_events.py build_newsletter.py
 
-## No secrets
+    # Rebuild the event log: the model-stability cutoff changes what counts
+    sudo -u hunter python3 hunter_events.py --reset --backfill
 
-Nothing here holds a credential. `HUNTER_KEY` is read from the
-environment, the DefiLlama endpoints are public and unauthenticated, and
-the scoring factors these modules produce are already served publicly at
-`rcloop-proxy.vercel.app/api/scores`.
+    # Build this week's issue, then run a scan to publish everything
+    sudo -u hunter python3 build_newsletter.py
+    sudo -u hunter python3 hunter_app.py --scan
 
-If a module ever needs a secret, it reads it from the environment and
-the value stays on the server.
+The scan now carries events, score history and last week's issue in the
+same `/api/scores` payload, so the website needs no new endpoint.

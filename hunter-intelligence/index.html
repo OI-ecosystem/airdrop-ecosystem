@@ -84,6 +84,19 @@ h1 em{font-style:normal;color:var(--green);}
 .p-fill{height:100%;border-radius:2px;}
 .p-num{font-size:13px;font-weight:600;width:28px;text-align:right;}
 .p-conv{font-size:11px;padding:2px 9px;border-radius:99px;flex-shrink:0;width:74px;text-align:center;}
+.p-spark{width:54px;flex-shrink:0;display:flex;align-items:center;}
+.ev-pill{font-size:9px;text-transform:uppercase;letter-spacing:0.05em;padding:1px 6px;border-radius:99px;margin-left:7px;white-space:nowrap;vertical-align:1px;border:1px solid transparent;}
+.ev-high{background:#E2F0EE;color:#1C5B52;}
+.ev-part{background:#F3EDE2;color:#7A5B18;}
+.ev-none{background:transparent;color:var(--text3);border-color:var(--line);}
+.issue-h{font-size:13px;font-weight:600;color:var(--text);margin:18px 0 8px;letter-spacing:-0.01em;}
+.issue-p{font-size:13px;color:var(--text2);line-height:1.65;margin:0 0 9px;}
+.issue-list{margin:0 0 10px;padding-left:18px;}
+.issue-list li{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:5px;}
+.issue-table{width:100%;border-collapse:collapse;margin:4px 0 12px;font-size:12px;}
+.issue-table th{text-align:left;font-weight:500;color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:0.05em;padding:5px 8px 5px 0;border-bottom:1px solid var(--line);}
+.issue-table td{padding:6px 8px 6px 0;border-bottom:1px solid var(--line);color:var(--text2);}
+.issue-table td:first-child{color:var(--text3);width:24px;}
 .conv-high{background:#EAF3DE;color:#3B6D11;}
 .conv-mod{background:#FAEEDA;color:#854F0B;}
 .conv-sup{background:var(--bg2);color:var(--text3);}
@@ -191,26 +204,6 @@ footer{border-top:0.5px solid var(--border);padding:24px 0;display:flex;justify-
   <div class="stat"><div class="stat-val" id="stat-urgent">3</div><div class="stat-label">Urgent signals</div></div>
 </div>
 
-<div id="how">
-  <div class="section-title">How it works</div>
-  <div class="how-grid">
-    <div class="how-card">
-      <div class="how-num">01</div>
-      <div class="how-title">Protocol discovery</div>
-      <div class="how-desc">AI scans DefiLlama and protocol announcements daily, surfacing candidates before mainstream attention. Live TVL feeds the scoring model automatically.</div>
-    </div>
-    <div class="how-card">
-      <div class="how-num">02</div>
-      <div class="how-title">6-factor scoring</div>
-      <div class="how-desc">Each protocol scored on timing, TVL trajectory, investor tier, team credibility, on-chain activity, social signal, and token confirmation hints. Reasoning shown, not just conclusions.</div>
-    </div>
-    <div class="how-card">
-      <div class="how-num">03</div>
-      <div class="how-title">A record, not a snapshot</div>
-      <div class="how-desc">Every scan is archived. Scores are kept with their timestamps, so past calls can be read back and checked against what actually happened — rather than quietly revised. Live gas-cost ROI per protocol sits alongside.</div>
-    </div>
-  </div>
-</div>
 
 <div id="protocols" class="protocols-section">
   <div class="section-title">This week's rankings &mdash; live TVL from DefiLlama</div>
@@ -220,10 +213,25 @@ footer{border-top:0.5px solid var(--border);padding:24px 0;display:flex;justify-
   <div class="tvl-note" id="tvl-note"></div>
 </div>
 
+<!-- WHAT CHANGED — the event log, which is the proof the engine runs -->
+<div class="feature-section" id="events-section" style="display:none;">
+  <div class="feature-header">
+    <div class="section-title" style="margin-bottom:0;">What changed</div>
+    <span class="feature-badge" style="background:#F3EDE2;color:#7A5B18;" id="events-count">&nbsp;</span>
+  </div>
+  <p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6;">
+    Every scan is compared against the one before it. When a deadline is confirmed, a window
+    closes, or a protocol distributes its token and leaves the list, it is recorded here and
+    never edited afterwards. This is the part of Hunter you cannot fake with a static page.
+  </p>
+  <div id="events-list"></div>
+  <div class="tvl-note" id="events-note" style="margin-top:14px;"></div>
+</div>
+
 <!-- THE BRIEFING — published on a seven-day delay -->
 <div class="feature-section" id="briefing-section" style="display:none;">
   <div class="feature-header">
-    <div class="section-title" style="margin-bottom:0;">Last week's briefing</div>
+    <div class="section-title" style="margin-bottom:0;">Last week's issue</div>
     <span class="feature-badge" style="background:#EAF3DE;color:#3B6D11;" id="briefing-date">&nbsp;</span>
   </div>
   <p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6;">
@@ -235,6 +243,27 @@ footer{border-top:0.5px solid var(--border);padding:24px 0;display:flex;justify-
   <div class="heatmap-wrap">
     <div id="briefing-text" style="font-size:14px;line-height:1.75;white-space:pre-wrap;"></div>
     <div class="heatmap-note" id="briefing-foot"></div>
+  </div>
+</div>
+
+<div id="how">
+  <div class="section-title">How it works</div>
+  <div class="how-grid">
+    <div class="how-card">
+      <div class="how-num">01</div>
+      <div class="how-title">Protocol discovery</div>
+      <div class="how-desc">AI scans DefiLlama and protocol announcements daily, surfacing candidates before mainstream attention. Live TVL feeds the scoring model automatically.</div>
+    </div>
+    <div class="how-card">
+      <div class="how-num">02</div>
+      <div class="how-title">6-factor scoring</div>
+      <div class="how-desc">Each protocol scored on six factors: timing against its expected distribution, TVL trajectory measured against the market rather than in isolation, investor tier, team credibility, on-chain activity and social signal. Two to three are measured live; the rest are assessed and change rarely. The evidence label on each row tells you which.</div>
+    </div>
+    <div class="how-card">
+      <div class="how-num">03</div>
+      <div class="how-title">A record, not a snapshot</div>
+      <div class="how-desc">Every scan is archived. Scores are kept with their timestamps, so past calls can be read back and checked against what actually happened — rather than quietly revised. Live gas-cost ROI per protocol sits alongside.</div>
+    </div>
   </div>
 </div>
 
@@ -484,6 +513,9 @@ let AI_BRIEFING   = null;
 let BRIEFING_DELAYED      = null;
 let BRIEFING_DELAYED_SCAN = null;
 let BRIEFING_DELAYED_DAYS = 7;
+let EVENTS     = [];
+let HISTORY    = {};
+let NEWSLETTER = null;
 
 async function loadLiveScores(){
   try{
@@ -501,23 +533,201 @@ async function loadLiveScores(){
       BRIEFING_DELAYED      = d.ai_briefing_delayed      || null;
       BRIEFING_DELAYED_SCAN = d.ai_briefing_delayed_scan || null;
       BRIEFING_DELAYED_DAYS = d.ai_briefing_delayed_days || 7;
+      EVENTS     = Array.isArray(d.events) ? d.events : [];
+      HISTORY    = d.history || {};
+      NEWSLETTER = d.newsletter_delayed || null;
     }
   }catch(e){
     console.log("[hunter] live feed unavailable, using bundled snapshot:", e.message);
   }
   renderDataStatus();
   renderBriefing();
+  renderEvents();
+}
+
+/* ── Event feed ──────────────────────────────────────────────────────
+   Shows what happened, dated by when it happened rather than when we
+   noticed. Distributions seeded from history are months old and must
+   not masquerade as this week's news.                                 */
+const EVENT_STYLE = {
+  distributed:       {label:"Distributed",  bg:"#F3E4E4", fg:"#8C2F2F"},
+  deadline_set:      {label:"Deadline",     bg:"#E6F1FB", fg:"#0C447C"},
+  deadline_near:     {label:"Closing",      bg:"#FBEFDC", fg:"#8A5A0B"},
+  deadline_passed:   {label:"Closed",       bg:"#EFEDEA", fg:"#6B6762"},
+  candidate_cleared: {label:"New",          bg:"#EAF3DE", fg:"#3B6D11"},
+  candidate_found:   {label:"Spotted",      bg:"#EAF3DE", fg:"#3B6D11"},
+  conviction_change: {label:"Conviction",   bg:"#EDE7F3", fg:"#4B2E78"},
+  tvl_surge:         {label:"TVL",          bg:"#E2F0EE", fg:"#1C5B52"},
+  retired:           {label:"Retired",      bg:"#EFEDEA", fg:"#6B6762"},
+};
+
+function eventDate(e){
+  const raw = (e.occurred_at || e.detected_at || "").slice(0,10);
+  if(!raw) return "";
+  const d = new Date(raw + "T00:00:00Z");
+  if(isNaN(d)) return raw;
+  const today = new Date();
+  const days = Math.round((d - today) / 86400000);
+  if(days > 1)  return `in ${days} days`;
+  if(days > -1) return "today";
+  if(days > -2) return "yesterday";
+  if(days > -31) return `${Math.abs(days)} days ago`;
+  return d.toLocaleDateString(undefined,{month:"short", year:"numeric"});
+}
+
+function renderEvents(){
+  const sec = document.getElementById("events-section");
+  if(!sec) return;
+  if(!EVENTS.length){ sec.style.display = "none"; return; }
+  sec.style.display = "block";
+  document.getElementById("events-count").textContent =
+    `${EVENTS.length} recorded`;
+  /* Lifecycle first, then recency. Something still ahead of us is
+     actionable; something completed is evidence. Both belong here, but
+     not in the same visual weight. */
+  const order = {upcoming:0, announced:1, completed:2};
+  const sorted = EVENTS.slice().sort((a,b)=>
+    (order[a.status] ?? 3) - (order[b.status] ?? 3));
+
+  document.getElementById("events-list").innerHTML = sorted.slice(0,12).map(e=>{
+    const s = EVENT_STYLE[e.kind] || {label:e.kind, bg:"#EFEDEA", fg:"#6B6762"};
+    /* "derived" means Hunter computed it from its own data, which is
+       sound. Only an external report awaiting on-chain confirmation
+       gets flagged to the reader. */
+    const unconfirmed = e.verification === "unverified";
+    const done = e.status === "completed";
+    return `<div style="display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line);${done?"opacity:0.62;":""}">
+      <span style="flex:0 0 76px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;background:${s.bg};color:${s.fg};padding:3px 8px;border-radius:99px;text-align:center;">${s.label}</span>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;color:var(--text);line-height:1.45;">${esc(e.headline||"")}${unconfirmed?` <span title="From our own research notes, not yet confirmed on-chain" style="font-size:10px;color:var(--text3);border:1px solid var(--line);padding:0 5px;border-radius:99px;">unconfirmed</span>`:""}</div>
+        ${e.detail?`<div style="font-size:12px;color:var(--text2);margin-top:3px;line-height:1.5;">${esc(e.detail).slice(0,180)}</div>`:""}
+      </div>
+      <span style="flex:0 0 auto;font-size:11px;color:var(--text3);white-space:nowrap;padding-top:1px;">${eventDate(e)}</span>
+    </div>`;
+  }).join("");
+  const nl = NEWSLETTER
+    ? ` Last week's full written issue is in the briefing below.`
+    : "";
+  document.getElementById("events-note").textContent =
+    `Append-only log. Dated by when each thing happened, not when Hunter noticed it.${nl}`;
+}
+
+function esc(s){
+  return String(s).replace(/[&<>"']/g, c =>
+    ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
+/* ── Evidence and trend ──────────────────────────────────────────────
+   Confidence arrives as a decimal — currently 0.00 to 0.33, because
+   only two of six factors are measured live. Printing "0.33" invites
+   the reader to treat it as a 33% chance of something, which it is
+   not: it is the share of the score standing on measured data rather
+   than on our own assessment. Three labels say that without inviting
+   the arithmetic.                                                     */
+function evidenceLabel(c){
+  if(c === null || c === undefined) return {text:"Unvalidated", cls:"ev-none"};
+  if(c >= 0.5)  return {text:"Measured",    cls:"ev-high"};
+  if(c >= 0.15) return {text:"Partial",     cls:"ev-part"};
+  return {text:"Unvalidated", cls:"ev-none"};
+}
+
+/* A score that drifts a point between scans is noise, not a trend. The
+   deadband keeps an arrow from flipping every six hours and teaching
+   the reader to ignore it. */
+const TREND_DEADBAND = 3;
+function trend(pid){
+  const h = HISTORY[pid];
+  if(!h || h.length < 2) return null;
+  const first = h[0], last = h[h.length - 1], delta = last - first;
+  if(Math.abs(delta) < TREND_DEADBAND) return {dir:"flat", delta:delta};
+  return {dir: delta > 0 ? "up" : "down", delta: delta};
+}
+
+/* Sparkline as inline SVG: no library, no request, scales to the
+   series it is given rather than to 0-100, so a protocol sitting in
+   the sixties still shows its own shape. */
+function sparkline(pid){
+  const h = HISTORY[pid];
+  if(!h || h.length < 3) return "";
+  const w = 54, ht = 16, lo = Math.min(...h), hi = Math.max(...h);
+  const span = (hi - lo) || 1;
+  const pts = h.map((v,i)=>{
+    const x = (i / (h.length - 1)) * w;
+    const y = ht - ((v - lo) / span) * (ht - 3) - 1.5;
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(" ");
+  const rising = h[h.length-1] >= h[0];
+  return `<svg width="${w}" height="${ht}" viewBox="0 0 ${w} ${ht}" aria-hidden="true" style="overflow:visible;">
+    <polyline points="${pts}" fill="none" stroke="${rising?"#639922":"#B4451A"}" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" opacity="0.75"/>
+  </svg>`;
 }
 
 /* The public page shows the briefing from a week ago, with its date, so a
    reader can check it against the current table. Hidden entirely until the
    archive is deep enough to supply one — an empty panel says nothing. */
+/* Minimal markdown for the weekly issue. Deliberately not a full
+   parser: it handles exactly what build_newsletter.py emits — h1/h2,
+   bold, bullets, tables, italic notes and rules — and escapes
+   everything first, so a protocol name containing a bracket cannot
+   inject markup. Anything it does not recognise falls through as a
+   plain paragraph rather than being dropped. */
+function renderIssue(md){
+  const lines = esc(md).split("\n");
+  let out = [], inList = false, inTable = false;
+  const closeList  = () => { if(inList){ out.push("</ul>"); inList = false; } };
+  const closeTable = () => { if(inTable){ out.push("</tbody></table>"); inTable = false; } };
+  const inline = s => s
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/(^|\s)_(.+?)_(?=\s|$|\.)/g, "$1<em>$2</em>");
+
+  for(const raw of lines){
+    const l = raw.trim();
+    if(!l){ closeList(); closeTable(); continue; }
+    if(/^\|[\s-:|]+\|$/.test(l)) continue;                 // table rule
+    if(l.startsWith("|")){
+      const cells = l.split("|").slice(1,-1).map(c=>inline(c.trim()));
+      if(!inTable){
+        closeList();
+        out.push(`<table class="issue-table"><thead><tr>${
+          cells.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>`);
+        inTable = true;
+      } else {
+        out.push(`<tr>${cells.map(c=>`<td>${c}</td>`).join("")}</tr>`);
+      }
+      continue;
+    }
+    closeTable();
+    if(l === "---"){ closeList(); out.push('<hr style="border:0;border-top:1px solid var(--line);margin:18px 0;">'); continue; }
+    if(l.startsWith("## ")){ closeList(); out.push(`<h4 class="issue-h">${inline(l.slice(3))}</h4>`); continue; }
+    if(l.startsWith("# ")) { closeList(); continue; }       // title shown in the header already
+    if(l.startsWith("- ")){
+      if(!inList){ out.push('<ul class="issue-list">'); inList = true; }
+      out.push(`<li>${inline(l.slice(2))}</li>`);
+      continue;
+    }
+    closeList();
+    out.push(`<p class="issue-p">${inline(l)}</p>`);
+  }
+  closeList(); closeTable();
+  return out.join("");
+}
+
 function renderBriefing(){
-  if(!BRIEFING_DELAYED) return;
+  if(!BRIEFING_DELAYED && !NEWSLETTER) return;
   const sec = document.getElementById("briefing-section");
   if(!sec) return;
-  document.getElementById("briefing-text").textContent = BRIEFING_DELAYED;
-  const scan = BRIEFING_DELAYED_SCAN || "";
+
+  /* The weekly issue is the better artefact where one exists: it is
+     event-led and already states what it withheld and why. The raw
+     six-hourly briefing is the fallback. */
+  const body = document.getElementById("briefing-text");
+  if(NEWSLETTER && NEWSLETTER.markdown){
+    body.innerHTML = renderIssue(NEWSLETTER.markdown);
+  } else {
+    body.textContent = BRIEFING_DELAYED;
+  }
+  const scan = (NEWSLETTER && NEWSLETTER.issue_date)
+    ? NEWSLETTER.issue_date : (BRIEFING_DELAYED_SCAN || "");
   const date = scan.slice(0,10);
   if(date){
     const d = new Date(date + "T00:00:00Z");
@@ -528,10 +738,11 @@ function renderBriefing(){
       BRIEFING_DELAYED_DAYS + " days ago";
   }
   document.getElementById("briefing-foot").textContent =
-    "Written by Hunter " + BRIEFING_DELAYED_DAYS + " days ago, published unedited. "
+    (NEWSLETTER ? "Hunter's weekly issue, published a week late and unedited. "
+                : "Written by Hunter " + BRIEFING_DELAYED_DAYS + " days ago, published unedited. ")
     + "Compare it against the rankings above — that comparison is the point. "
     + "The current briefing, refreshed every six hours, goes to subscribers.";
-  sec.style.display = "";
+  sec.style.display = "block";
 }
 
 function renderDataStatus(){
@@ -547,7 +758,22 @@ function renderDataStatus(){
 }
 
 /* ── SCORING HELPERS ── */
-function baseScore(p){const s=Object.values(p.factors).reduce((a,b)=>a+b,0);return p.permanent?Math.max(s,60):s;}
+/* The server is the source of truth for a score.
+   This function used to sum the factors itself and apply a floor of 60
+   to permanent programmes. Both were wrong to do here: summing
+   re-derives a number the engine has already computed and rounded, and
+   the floor is a scoring rule that was removed from the model in v3 —
+   it survived in the browser for two days after being deleted on the
+   server, quietly holding Base, Polymarket and MetaMask above their
+   real scores.
+
+   A second copy of a scoring rule is a second thing to forget. The
+   client now computes nothing: it only falls back to summing when the
+   live feed is unreachable and all it has is the bundled snapshot. */
+function baseScore(p){
+  if(typeof p.score === "number") return p.score;
+  return Object.values(p.factors || {}).reduce((a,b)=>a+b,0);
+}
 function conviction(s){return s>=70?"HIGH":s>=55?"MODERATE":"SUPPRESS";}
 function convClass(c){return c==="HIGH"?"conv-high":c==="MODERATE"?"conv-mod":"conv-sup";}
 function scoreColor(s){return s>=70?"#639922":s>=55?"#BA7517":"#888780";}
@@ -609,7 +835,7 @@ async function buildTable(){
   let html=`<div class="protocol-row header" style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;">
     <span style="width:20px;">#</span><span style="flex:1;">Protocol</span>
     <span style="width:90px;">Chain</span><span style="width:70px;text-align:right;">TVL</span>
-    <span style="width:100px;">Score</span><span style="width:74px;text-align:center;">Signal</span></div>`;
+    <span style="width:100px;">Score</span><span style="width:54px;">Trend</span><span style="width:74px;text-align:center;">Signal</span></div>`;
   protocols.forEach((p,i)=>{
     const c=conviction(p.score),sc=scoreColor(p.score),tvlStr=p.tvl?fmtTvl(p.tvl):"—",locked=i>=3;
     if(locked){html+=`<div class="protocol-row locked-row">
@@ -617,13 +843,19 @@ async function buildTable(){
       <span class="p-name" style="color:var(--text3);">${p.name}</span>
       <span class="p-chain">${p.chain}</span><span class="p-tvl">${tvlStr}</span>
       <span class="locked-msg" style="flex:1;">&#128274; Standard tier &amp; above</span></div>`;}
-    else{html+=`<div class="protocol-row">
+    else{
+      const ev = evidenceLabel(p.confidence), tr = trend(p.id), spark = sparkline(p.id);
+      const arrow = tr && tr.dir !== "flat"
+        ? `<span title="${tr.delta>0?"+":""}${tr.delta} points across the recorded scans" style="font-size:11px;color:${tr.dir==="up"?"#639922":"#B4451A"};margin-left:5px;">${tr.dir==="up"?"▲":"▼"}${Math.abs(tr.delta)}</span>`
+        : "";
+      html+=`<div class="protocol-row">
       <span class="p-rank">${p.rank}</span>
-      <span class="p-name">${p.name}${p.urgent?` <span style="font-size:10px;background:#EAF3DE;color:#3B6D11;padding:1px 7px;border-radius:99px;margin-left:6px;">Urgent</span>`:""}${p.permanent?` <span style="font-size:10px;background:#E6F1FB;color:#0C447C;padding:1px 7px;border-radius:99px;margin-left:4px;">Permanent</span>`:""}</span>
+      <span class="p-name">${p.name}${p.urgent?` <span style="font-size:10px;background:#EAF3DE;color:#3B6D11;padding:1px 7px;border-radius:99px;margin-left:6px;">Urgent</span>`:""}${p.permanent?` <span style="font-size:10px;background:#E6F1FB;color:#0C447C;padding:1px 7px;border-radius:99px;margin-left:4px;">Permanent</span>`:""}<span class="ev-pill ${ev.cls}" title="How much of this score stands on live measured data rather than our own assessment">${ev.text}</span></span>
       <span class="p-chain">${p.chain}</span>
       <span class="p-tvl" style="color:${p.tvl?"var(--text)":"var(--text3)"};">${tvlStr}</span>
       <div class="p-score-wrap"><div class="p-bar"><div class="p-fill" style="width:${p.score}%;background:${sc};"></div></div>
-      <span class="p-num" style="color:${sc};">${p.score}</span></div>
+      <span class="p-num" style="color:${sc};">${p.score}</span>${arrow}</div>
+      <span class="p-spark">${spark}</span>
       <span class="p-conv ${convClass(c)}">${c}</span></div>`;}
   });
   html+=`<div class="unlock-note">Positions 4&ndash;20 with factor breakdowns and farming actions &mdash; <a href="#pricing">Standard and Pro tiers</a></div>`;
