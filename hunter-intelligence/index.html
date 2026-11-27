@@ -89,6 +89,16 @@ h1 em{font-style:normal;color:var(--green);}
 .ev-high{background:#E2F0EE;color:#1C5B52;}
 .ev-part{background:#F3EDE2;color:#7A5B18;}
 .ev-none{background:transparent;color:var(--text3);border-color:var(--line);}
+.route-row{display:flex;gap:10px;align-items:baseline;padding:0 0 11px 32px;margin-top:-4px;border-bottom:1px solid var(--line);}
+.route-row.locked{padding-bottom:11px;}
+.route-label{flex:0 0 86px;font-size:9px;text-transform:uppercase;letter-spacing:0.05em;color:var(--text3);padding-top:2px;}
+.route-text{flex:1;font-size:12px;color:var(--text2);line-height:1.55;}
+.route-text em{font-style:normal;color:var(--text3);font-size:11px;}
+.held-head{font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:var(--text3);margin:22px 0 4px;padding-top:14px;border-top:1px solid var(--line);}
+.held-note{font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:10px;}
+.protocol-row.held{opacity:0.66;}
+.held-why{flex:1;font-size:11px;color:var(--text3);text-align:right;padding-right:10px;}
+.elig-warn{margin-top:20px;padding:11px 13px;background:#FBF4E6;border:1px solid #E8D9B8;border-radius:6px;font-size:12px;color:#6B5418;line-height:1.55;}
 .issue-h{font-size:13px;font-weight:600;color:var(--text);margin:18px 0 8px;letter-spacing:-0.01em;}
 .issue-p{font-size:13px;color:var(--text2);line-height:1.65;margin:0 0 9px;}
 .issue-list{margin:0 0 10px;padding-left:18px;}
@@ -553,6 +563,13 @@ const EVENT_STYLE = {
   distributed:       {label:"Distributed",  bg:"#F3E4E4", fg:"#8C2F2F"},
   deadline_set:      {label:"Deadline",     bg:"#E6F1FB", fg:"#0C447C"},
   deadline_near:     {label:"Closing",      bg:"#FBEFDC", fg:"#8A5A0B"},
+  /* Entry already shut, but existing holders still have to act. Kept
+     visually distinct from "Closing" because telling someone who cannot
+     qualify that a window is closing invites them to spend gas chasing
+     nothing — which is the error the 27 Nov audit removed. */
+  action_required:   {label:"Act now",      bg:"#F7E3D4", fg:"#8A3B0B"},
+  left_universe:     {label:"Dropped",      bg:"#EFEDEA", fg:"#6B6762"},
+  entered_universe:  {label:"Added",        bg:"#EAF3DE", fg:"#3B6D11"},
   deadline_passed:   {label:"Closed",       bg:"#EFEDEA", fg:"#6B6762"},
   candidate_cleared: {label:"New",          bg:"#EAF3DE", fg:"#3B6D11"},
   candidate_found:   {label:"Spotted",      bg:"#EAF3DE", fg:"#3B6D11"},
@@ -793,9 +810,30 @@ async function fetchTvl(slug){
 function bannerText(protocols, liveTvls){
   const urgent = protocols.filter(p=>p.urgent);
   let s;
+
+  /* The banner used to read only the `urgent` flag, which the audit
+     cleared from every protocol — correctly, since none has a genuine
+     entry deadline. But it then announced "no urgent deadlines" directly
+     above an event feed led by "action required within 2 days", because
+     the two were reading different sources. Anything dated and still
+     ahead of us is the banner's job, whoever it applies to. */
+  const live = (EVENTS || []).filter(e =>
+    e.status === "upcoming" &&
+    (e.kind === "action_required" || e.kind === "deadline_near"));
+  if(live.length && !urgent.length){
+    const first = live[0];
+    s = `Live signal: ${esc(first.headline)}.`;
+    if(live.length > 1) s += ` ${live.length - 1} other dated item${live.length > 2 ? "s" : ""}.`;
+    if(liveTvls.length) s += ` Live TVL: ${liveTvls.join(", ")}.`;
+    return s;
+  }
+
   if(urgent.length === 0){
-    const top = protocols[0];
-    s = top ? `Live signal: ${top.name} leads at ${top.score}/100. No urgent deadlines this scan.`
+    const actionable = protocols.filter(p => p.rank).length;
+    const top = protocols.find(p => p.rank) || protocols[0];
+    s = top ? `Live signal: ${top.name} leads at ${top.score}/100 — ${actionable
+                 } protocol${actionable === 1 ? "" : "s"} you can still enter. `
+                 + "No dated deadlines this scan."
             : "Live signal: scan in progress.";
   } else {
     const named = urgent.slice(0,3).map(p=>{
@@ -818,12 +856,22 @@ async function buildTable(){
   await Promise.all(Object.entries(slugMap).map(async([slug,proto])=>{
     const tvl=await fetchTvl(slug);if(tvl)proto.tvl=tvl;
   }));
-  protocols.sort((a,b)=>b.score-a.score);
-  protocols.forEach((p,i)=>p.rank=i+1);
-  const above=protocols.filter(p=>conviction(p.score)!=="SUPPRESS").length;
-  const urgent=protocols.filter(p=>p.urgent).length;
-  document.getElementById("stat-above").textContent=above;
-  document.getElementById("stat-urgent").textContent=urgent;
+  /* The server decides rank, and the server alone.
+     This used to re-sort by score and renumber, which overrode the
+     engine's own ordering — the same mistake baseScore() made. It now
+     matters more than cosmetically: the engine deliberately withholds a
+     rank from protocols you cannot act on, and a client-side sort by
+     score puts a two-year-old traded token back at the top. */
+  const ranked   = protocols.filter(p => p.rank)
+                            .sort((a,b) => a.rank - b.rank);
+  const heldBack = protocols.filter(p => !p.rank)
+                            .sort((a,b) => b.score - a.score);
+  /* The headline stat used to be "above threshold", which counted any
+     protocol scoring over 55 — including ones whose window had shut.
+     What a reader needs first is how many they can actually enter. */
+  document.getElementById("stat-above").textContent = ranked.length;
+  document.getElementById("stat-urgent").textContent =
+    ranked.filter(p => p.entry_window === "open").length;
   const liveTvls=protocols.filter(p=>p.tvl).map(p=>p.name);
   if(liveTvls.length>0){
     document.getElementById("live-banner-text").textContent=bannerText(protocols,liveTvls);
@@ -832,33 +880,74 @@ async function buildTable(){
     document.getElementById("live-banner-text").textContent=bannerText(protocols,[]);
     document.getElementById("tvl-note").textContent="TVL data from DefiLlama. Refreshes every 6 hours.";
   }
-  let html=`<div class="protocol-row header" style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;">
-    <span style="width:20px;">#</span><span style="flex:1;">Protocol</span>
-    <span style="width:90px;">Chain</span><span style="width:70px;text-align:right;">TVL</span>
-    <span style="width:100px;">Score</span><span style="width:54px;">Trend</span><span style="width:74px;text-align:center;">Signal</span></div>`;
-  protocols.forEach((p,i)=>{
-    const c=conviction(p.score),sc=scoreColor(p.score),tvlStr=p.tvl?fmtTvl(p.tvl):"—",locked=i>=3;
-    if(locked){html+=`<div class="protocol-row locked-row">
-      <span class="p-rank">${p.rank}</span>
-      <span class="p-name" style="color:var(--text3);">${p.name}</span>
-      <span class="p-chain">${p.chain}</span><span class="p-tvl">${tvlStr}</span>
-      <span class="locked-msg" style="flex:1;">&#128274; Standard tier &amp; above</span></div>`;}
-    else{
-      const ev = evidenceLabel(p.confidence), tr = trend(p.id), spark = sparkline(p.id);
-      const arrow = tr && tr.dir !== "flat"
-        ? `<span title="${tr.delta>0?"+":""}${tr.delta} points across the recorded scans" style="font-size:11px;color:${tr.dir==="up"?"#639922":"#B4451A"};margin-left:5px;">${tr.dir==="up"?"▲":"▼"}${Math.abs(tr.delta)}</span>`
-        : "";
-      html+=`<div class="protocol-row">
-      <span class="p-rank">${p.rank}</span>
-      <span class="p-name">${p.name}${p.urgent?` <span style="font-size:10px;background:#EAF3DE;color:#3B6D11;padding:1px 7px;border-radius:99px;margin-left:6px;">Urgent</span>`:""}${p.permanent?` <span style="font-size:10px;background:#E6F1FB;color:#0C447C;padding:1px 7px;border-radius:99px;margin-left:4px;">Permanent</span>`:""}<span class="ev-pill ${ev.cls}" title="How much of this score stands on live measured data rather than our own assessment">${ev.text}</span></span>
-      <span class="p-chain">${p.chain}</span>
+  const WINDOW_STYLE = {
+    open:    {label:"Open",    bg:"#EAF3DE", fg:"#3B6D11", title:"You can still qualify"},
+    rolling: {label:"Rolling", bg:"#E6F1FB", fg:"#0C447C", title:"Eligibility accrues, no announced close"},
+    closed:  {label:"Closed",  bg:"#F3E4E4", fg:"#8C2F2F", title:"Eligibility already determined"},
+    unknown: {label:"Unknown", bg:"#EFEDEA", fg:"#6B6762", title:"Not verified either way"},
+  };
+  const TIER_NOTE = {
+    official: "Confirmed by the protocol itself",
+    reported: "Reported by a named source, not confirmed by the protocol",
+    rumour:   "Unverified — aggregator chatter only",
+  };
+
+  function windowPill(p){
+    const w = WINDOW_STYLE[p.entry_window] || WINDOW_STYLE.unknown;
+    return `<span title="${w.title}" style="font-size:9px;text-transform:uppercase;letter-spacing:0.05em;background:${w.bg};color:${w.fg};padding:1px 6px;border-radius:99px;white-space:nowrap;">${w.label}</span>`;
+  }
+
+  function row(p, locked){
+    const c = conviction(p.score), sc = scoreColor(p.score);
+    const tvlStr = p.tvl ? fmtTvl(p.tvl) : "\u2014";
+    const ev = evidenceLabel(p.confidence), tr = trend(p.id);
+    const arrow = tr && tr.dir !== "flat"
+      ? `<span style="font-size:11px;color:${tr.dir==="up"?"#639922":"#B4451A"};margin-left:5px;">${tr.dir==="up"?"\u25B2":"\u25BC"}${Math.abs(tr.delta)}</span>` : "";
+    return `<div class="protocol-row">
+      <span class="p-rank">${p.rank || "\u2014"}</span>
+      <span class="p-name">${esc(p.name)} ${windowPill(p)}<span class="ev-pill ${ev.cls}" title="How much of this score rests on live measured data">${ev.text}</span></span>
+      <span class="p-chain">${esc(p.chain||"")}</span>
       <span class="p-tvl" style="color:${p.tvl?"var(--text)":"var(--text3)"};">${tvlStr}</span>
       <div class="p-score-wrap"><div class="p-bar"><div class="p-fill" style="width:${p.score}%;background:${sc};"></div></div>
       <span class="p-num" style="color:${sc};">${p.score}</span>${arrow}</div>
-      <span class="p-spark">${spark}</span>
-      <span class="p-conv ${convClass(c)}">${c}</span></div>`;}
-  });
-  html+=`<div class="unlock-note">Positions 4&ndash;20 with factor breakdowns and farming actions &mdash; <a href="#pricing">Standard and Pro tiers</a></div>`;
+      <span class="p-spark">${sparkline(p.id)}</span>
+      <span class="p-conv ${convClass(c)}">${c}</span></div>
+      ${locked
+        ? `<div class="route-row locked"><span class="locked-msg">\u{1F512} How to qualify, and by when \u2014 <a href="#pricing">Standard and Pro</a></span></div>`
+        : `<div class="route-row"><span class="route-label">How to qualify</span><span class="route-text">${esc(p.eligibility || "Not published.")}${p.eligibility_tier ? ` <em title="${TIER_NOTE[p.eligibility_tier]||""}">(${p.eligibility_tier})</em>` : ""}</span></div>`}`;
+  }
+
+  /* Ranks are free. What to do about them is the product.
+     The old gate hid positions 4-20, which is worthless when only three
+     protocols are actionable \u2014 and it was the wrong thing to sell. Knowing
+     Extended ranked somewhere was of no use to anyone; knowing its signing
+     cutoff was 08:30 UTC on 29 November was worth the subscription on its
+     own. So the ranking is open and the route in is gated. */
+  let html = `<div class="protocol-row header" style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;">
+    <span style="width:20px;">#</span><span style="flex:1;">Protocol</span>
+    <span style="width:90px;">Chain</span><span style="width:70px;text-align:right;">TVL</span>
+    <span style="width:100px;">Score</span><span style="width:54px;">Trend</span><span style="width:74px;text-align:center;">Signal</span></div>`;
+
+  if(!ranked.length){
+    html += `<div class="protocol-row"><span style="color:var(--text3);font-size:13px;padding:8px 0;">No protocol currently has an entry window you can act on. That is the finding, not an error \u2014 see what we checked below.</span></div>`;
+  }
+  ranked.forEach((p,i) => { html += row(p, i >= 1); });
+
+  if(heldBack.length){
+    html += `<div class="held-head">Checked and held back \u2014 ${heldBack.length} protocols</div>
+      <div class="held-note">Scored, but not ranked: you cannot act on them. Shown because knowing what to ignore is worth as much as knowing what to chase.</div>`;
+    heldBack.forEach(p => {
+      html += `<div class="protocol-row held">
+        <span class="p-rank">\u2014</span>
+        <span class="p-name" style="color:var(--text2);">${esc(p.name)} ${windowPill(p)}</span>
+        <span class="p-chain">${esc(p.chain||"")}</span>
+        <span class="p-tvl">${p.tvl?fmtTvl(p.tvl):"\u2014"}</span>
+        <span class="held-why">${esc(p.rank_excluded_because || "Not actionable")}</span>
+        <span class="p-num" style="color:var(--text3);">${p.score}</span></div>`;
+    });
+  }
+
+  html += `<div class="elig-warn">\u26A0 No legitimate airdrop asks you to sign a message or connect your wallet to "check eligibility". Criteria here come only from the protocol's own site or verified account \u2014 anything else is marked reported or unverified. Fake eligibility checkers for major protocols rank highly in search results.</div>`;
   table.innerHTML=html;
   window._protocols=protocols;
   updateROI();

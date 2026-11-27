@@ -38,6 +38,7 @@ EVENT_DB = APP_DIR / "hunter_events.db"
 DISTRIBUTED        = "distributed"          # token launched, window closed
 DEADLINE_SET       = "deadline_set"         # a real date became known
 DEADLINE_NEAR      = "deadline_near"        # inside the alert window
+ACTION_REQUIRED    = "action_required"      # entry shut; holders must still act
 DEADLINE_PASSED    = "deadline_passed"      # window closed
 ENTERED_UNIVERSE   = "entered_universe"     # newly tracked
 LEFT_UNIVERSE      = "left_universe"        # no longer tracked
@@ -62,6 +63,25 @@ DEADLINE_NEAR_DAYS = 7
 # files written before schema 3.0 carry no version at all, so the entire
 # window reads as "unchanged". This date is the backstop.
 MODEL_STABLE_SINCE = "2026-11-25"
+
+# The protocol list itself was audited on 27 Nov 2026 against primary and
+# X sources. Before that date it carried deadlines that did not exist
+# (Miden's "Snapshot closing", Variational's invented 31 December),
+# protocols with no token ever announced (Glider, TreadFi, Farcaster),
+# one that had been dormant for eighteen months (Superposition), and two
+# whose tokens have been trading for years (Morpho, Aerodrome).
+#
+# Deadline and conviction events replayed from archive files written
+# before the audit therefore describe our own bad records, not anything
+# that happened in the market. Distributions are exempt: those were real
+# events whose dates are independently sourced.
+# A full timestamp, not a date: the audit happened mid-morning on the
+# 27th, so the 00:01 scan that same day is still pre-audit. scan_id is
+# "YYYY-MM-DD-HHMM", which compares correctly as a string.
+LIST_AUDITED_SINCE = "2026-11-27-0430"
+LIST_DERIVED_KINDS = {"deadline_set", "deadline_near", "action_required",
+                      "deadline_passed",
+                      "conviction_change", "score_shift"}
 
 VERIFIED   = "verified"      # from a primary source we queried
 DERIVED    = "derived"       # computed from data we hold
@@ -161,6 +181,15 @@ class EventLog:
         alert window would fire an event on every scan, four times a day
         until it passed.
         """
+        # Events derived from the pre-audit protocol list are records of
+        # our own bad data, not of anything that happened. Replaying the
+        # archive would otherwise publish Miden's non-existent snapshot
+        # and Variational's invented December deadline as market events.
+        # Distributions pass through: those dates are independently
+        # sourced and were real.
+        if (scan_id and kind in LIST_DERIVED_KINDS
+                and str(scan_id)[:15] < LIST_AUDITED_SINCE):
+            return None
         if dedupe_days and protocol_id:
             with self._conn() as c:
                 row = c.execute(
@@ -213,7 +242,7 @@ class EventLog:
     # Only events that point at a future date have a lifecycle worth
     # tracking. Everything else describes a moment that has already
     # happened, so it is complete the instant it is recorded.
-    FORWARD_KINDS = {"deadline_set", "deadline_near"}
+    FORWARD_KINDS = {"deadline_set", "deadline_near", "action_required"}
 
     @staticmethod
     def status_of(event, today=None):
@@ -271,7 +300,8 @@ class EventLog:
 
 
 def detect_events(log, previous, current, scan_id=None,
-                  prev_scoring_version=None, curr_scoring_version=None):
+                  prev_scoring_version=None, curr_scoring_version=None,
+                  prev_list_version=None, curr_list_version=None):
     """Diff two scans and record what materially changed.
 
     `previous` and `current` are lists of protocol dicts from the
@@ -301,6 +331,28 @@ def detect_events(log, previous, current, scan_id=None,
     # the version fields say — and before schema 3.0 they say nothing.
     if scan_id and str(scan_id)[:10] < MODEL_STABLE_SINCE:
         model_changed = True
+
+    # Likewise a change to the protocol list itself. Editing factors,
+    # retiring entries or reassigning classes moves scores, and those
+    # movements are our own bookkeeping — not the market. A date cutoff
+    # cannot separate the two, because the edit and the market happen on
+    # the same day; a version number can.
+    # An archive written before the list was versioned carries no stamp
+    # at all, which is itself the signal: it predates the audit, so any
+    # comparison against it spans the rewrite. Treating a missing stamp
+    # as "unchanged" is what let 10 phantom score shifts through — the
+    # same shape of bug as keying on display name across the schema 3.0
+    # boundary, and the same lesson: absent metadata means old, not same.
+    list_changed = (
+        curr_list_version is not None
+        and prev_list_version != curr_list_version
+    )
+    # The cutoff has to consider BOTH ends. Checking only the current
+    # scan missed every comparison that straddled the audit.
+    if scan_id and str(scan_id)[:15] < LIST_AUDITED_SINCE:
+        list_changed = True
+    if list_changed:
+        model_changed = True      # suppresses the score-derived events
 
     for pid, c in curr.items():
         name = c.get("name", pid)
@@ -340,13 +392,33 @@ def detect_events(log, previous, current, scan_id=None,
                           scan_id=scan_id):
                 n += 1
 
-        # Entering the alert window — deduped so it fires once, not 28 times
+        # Entering the alert window — deduped so it fires once, not 28 times.
+        #
+        # Two different deadlines live in this field and they must not be
+        # worded alike. For an open window the date is the last chance to
+        # QUALIFY. For a closed one, qualification is already settled and
+        # the date is the last chance to CLAIM what you hold — Extended's
+        # 08:30 UTC signing cutoff applies only to people who were in the
+        # 6 November snapshot. Telling a non-holder their "window closes
+        # in 3 days" invites them to spend gas chasing something they can
+        # never be eligible for, which is the error this audit removed.
         days = c.get("days_remaining")
         if days is not None and 0 <= days <= DEADLINE_NEAR_DAYS:
-            if log.record(DEADLINE_NEAR,
-                          f"{name} window closes in {days} day{'s' if days != 1 else ''}",
+            closed = c.get("entry_window") == "closed"
+            if closed:
+                headline = (f"{name}: action required within "
+                            f"{days} day{'s' if days != 1 else ''} if already eligible")
+                detail = ("Entry closed"
+                          + (f" on {c['entry_closed_on']}" if c.get("entry_closed_on") else "")
+                          + ". This deadline applies only to existing holders. "
+                          + c.get("note", ""))[:300]
+            else:
+                headline = f"{name} window closes in {days} day{'s' if days != 1 else ''}"
+                detail = c.get("note", "")[:300]
+            if log.record(ACTION_REQUIRED if closed else DEADLINE_NEAR,
+                          headline,
                           protocol_id=pid, protocol_name=name,
-                          detail=c.get("note", "")[:300],
+                          detail=detail,
                           occurred_at=c.get("deadline_iso"),
                           source="hunter", scan_id=scan_id,
                           dedupe_days=2):
@@ -405,10 +477,16 @@ def detect_events(log, previous, current, scan_id=None,
             continue
         if log.has_event(pid, DISTRIBUTED):
             continue
+        # A protocol leaves the universe once. Without a dedupe window
+        # every scan after the removal re-announced it, because the
+        # comparison keeps finding it in the previous record and missing
+        # from the current one — four duplicates appeared within minutes
+        # of retiring Superposition, Glider, TreadFi and Farcaster.
         if log.record(LEFT_UNIVERSE,
                       f"{p.get('name', pid)} is no longer tracked",
                       protocol_id=pid, protocol_name=p.get("name"),
-                      source="hunter", scan_id=scan_id):
+                      source="hunter", scan_id=scan_id,
+                      dedupe_days=365):
             n += 1
 
     return n

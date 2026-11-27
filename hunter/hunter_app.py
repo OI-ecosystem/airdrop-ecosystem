@@ -65,108 +65,241 @@ def hlog_sep():
     hlog('─' * 52)
 
 # ── Protocol registry ──
+# Incremented whenever PROTOCOLS changes in a way that moves scores:
+# factors edited, entries retired, classes reassigned. Stamped into every
+# archive file so the event log can tell "we changed our records" apart
+# from "the market moved" — a date-based cutoff cannot, because editing
+# the list and the market moving happen on the same day.
+#
+# 1  original hand-authored list
+# 2  27 Nov 2026 audit: 9 retired, classes and entry windows added,
+#    factors re-derived from sourced research
+PROTOCOL_LIST_VERSION = 2
+
 PROTOCOLS = [
-    {"name":"Miden","chain":"Ethereum ZK","permanent":False,"urgent":True,
-     "deadline":"Snapshot closing","defillama":None,"snapshotProb":82,
-     "gasUnits":120000,"chainKey":"eth",
-     "factors":{"timing":22,"tvl":14,"investors":18,"team":12,"social":4,"onchain":8},
-     "note":"ZK rollup. a16z + Coinbase. Snapshot closing — interact NOW. Deploy test contract, bridge assets, 3+ transactions."},
-    {"name":"MegaETH","chain":"MegaETH","permanent":False,"urgent":True,
-     "deadline":"Daily check-in","defillama":None,"snapshotProb":91,
-     "gasUnits":60000,"chainKey":"l2",
-     "factors":{"timing":20,"tvl":12,"investors":18,"team":13,"social":5,"onchain":7},
-     "note":"MEGA token launched 30 Apr 2026. Farming window closed."},
-    {"name":"Monad","chain":"Monad","permanent":False,"urgent":False,
-     "deadline":None,"defillama":None,"snapshotProb":88,
-     "gasUnits":80000,"chainKey":"l2",
-     "factors":{"timing":19,"tvl":11,"investors":20,"team":12,"social":5,"onchain":5},
-     "note":"Mainnet live since Nov 2025. MON distributed; claim window closed 3 Nov 2025. No second airdrop confirmed."},
-    {"name":"Base L2","chain":"Ethereum L2","permanent":True,"urgent":False,
-     "deadline":None,"defillama":"base","snapshotProb":74,
-     "gasUnits":65000,"chainKey":"l2",
-     "factors":{"timing":15,"tvl":18,"investors":18,"team":8,"social":4,"onchain":4},
-     "note":"Coinbase moat. 46% of all L2 TVL. Token rumoured 2026. Use Aerodrome, bridge via Base Bridge."},
-    {"name":"Polymarket","chain":"Polygon","permanent":True,"urgent":False,
-     "deadline":None,"defillama":"polymarket","snapshotProb":68,
-     "gasUnits":55000,"chainKey":"polygon",
-     "factors":{"timing":15,"tvl":14,"investors":16,"team":10,"social":5,"onchain":5},
-     "note":"Token confirmed. $9B valuation. Make real predictions on active markets."},
-    {"name":"Morpho","chain":"Ethereum","permanent":True,"urgent":False,
-     "deadline":None,"defillama":"morpho","snapshotProb":61,
-     "gasUnits":140000,"chainKey":"eth",
-     "factors":{"timing":15,"tvl":16,"investors":18,"team":8,"social":3,"onchain":3},
-     "note":"Paradigm-backed lending, TVL above $19B. MORPHO token already live, so no genesis drop — ongoing ecosystem incentives only. Supply USDC or WETH."},
-    {"name":"Aster Stage 6","chain":"BNB Chain","permanent":False,"urgent":True,
-     "deadline":"June 4 2026","defillama":None,"snapshotProb":45,
-     "gasUnits":70000,"chainKey":"bnb",
-     "factors":{"timing":18,"tvl":10,"investors":14,"team":9,"social":4,"onchain":7},
-     "note":"ASTER launched Sep 2025; Stage 6 window closed June 2026. Phase 2 distribution complete."},
-    {"name":"Hyperliquid","chain":"HyperEVM","permanent":True,"urgent":False,
-     "deadline":None,"defillama":"hyperliquid","snapshotProb":55,
-     "gasUnits":50000,"chainKey":"l2",
-     "factors":{"timing":15,"tvl":13,"investors":14,"team":10,"social":4,"onchain":5},
-     "note":"HYPE genesis drop Nov 2024. Docs confirm the points programme ended and no season 2 exists. Reserved supply is not a live farming route."},
-    {"name":"MetaMask","chain":"Ethereum","permanent":True,"urgent":False,
-     "deadline":None,"defillama":None,"snapshotProb":52,
-     "gasUnits":95000,"chainKey":"eth",
-     "factors":{"timing":15,"tvl":12,"investors":16,"team":10,"social":4,"onchain":4},
-     "note":"100M+ users. MASK token confirmed by Consensys, no ticker or date published. MetaMask Rewards points live — swaps, bridging, trading challenges."},
-    {"name":"Aerodrome","chain":"Base","permanent":True,"urgent":False,
-     "deadline":None,"defillama":"aerodrome-v2","snapshotProb":44,
-     "gasUnits":72000,"chainKey":"l2",
-     "factors":{"timing":15,"tvl":14,"investors":12,"team":9,"social":4,"onchain":5},
-     "note":"Base dominant DEX. Lock veAERO for governance. Provide USDC/ETH liquidity."},
-    {"name":"Ink (Kraken)","chain":"Ethereum L2","permanent":True,"urgent":False,
-     "deadline":None,"defillama":None,"snapshotProb":79,
-     "gasUnits":68000,"chainKey":"l2",
-     "factors":{"timing":16,"tvl":10,"investors":16,"team":9,"social":4,"onchain":3},
-     "note":"Confirmed $INK airdrop. Bridge to Ink L2, interact with dApps."},
-    {"name":"Variational","chain":"Arbitrum","permanent":False,"urgent":True,
-     "deadline":"December 31 2026","defillama":None,"snapshotProb":83,
-     "gasUnits":110000,"chainKey":"eth",
-     "factors":{"timing":19,"tvl":8,"investors":16,"team":8,"social":3,"onchain":3},
-     "note":"$171.8M raised (Series B Nov 2026): Dragonfly, Coinbase Ventures, Bain Capital Crypto, Peak XV. 32% genesis airdrop to points holders, fully unlocked at TGE. Trade perps on Omni (Arbitrum) — public mainnet since Nov 2026."},
-    {"name":"Farcaster","chain":"Base","permanent":True,"urgent":False,
-     "deadline":None,"defillama":None,"snapshotProb":41,
-     "gasUnits":45000,"chainKey":"l2",
-     "factors":{"timing":15,"tvl":8,"investors":15,"team":9,"social":5,"onchain":4},
-     "note":"Post on Warpcast, collect frames, hold native NFTs."},
-    {"name":"Glider","chain":"Base","permanent":False,"urgent":False,
-     "deadline":None,"defillama":None,"snapshotProb":86,
-     "gasUnits":60000,"chainKey":"l2",
-     "factors":{"timing":20,"tvl":7,"investors":16,"team":7,"social":3,"onchain":2},
-     "note":"a16z backed portfolio automation on Base. Points live."},
-    {"name":"Superposition","chain":"Arbitrum L2","permanent":False,"urgent":False,
-     "deadline":None,"defillama":None,"snapshotProb":77,
-     "gasUnits":70000,"chainKey":"l2",
-     "factors":{"timing":19,"tvl":6,"investors":16,"team":7,"social":3,"onchain":1},
-     "note":"a16z/Coinbase/GSR backed. Below threshold — monitor only."},
+    # ── OPEN: a new entrant can still qualify ──────────────────────────
+    {"name":"Variational","chain":"Arbitrum","permanent":False,"urgent":False,
+     "cls":"pre_token_open","chainKey":"l2","gasUnits":110000,
+     "deadline":None,"deadline_iso":None,
+     "entry_window":"open",
+     "eligibility":"Trade perps on Omni (Arbitrum). Weekly points accruing, no snapshot announced.",
+     "eligibility_tier":"official",
+     "defillama":None,
+     "factors":{"timing":17,"tvl":10,"investors":20,"team":11,"social":4,"onchain":9},
+     "note":"Confirmed 32% of supply to points holders, fully unlocked at launch. "
+            "$171.8M raised: $110M Series B 18 Nov 2026 at $1.5B led by Bain Capital Crypto "
+            "with Dragonfly, HSG, Peak XV, 50T Funds; $50M Series A led by Dragonfly May 2026. "
+            "Also Coinbase Ventures, Hack VC. Founders Lucas V. Schuermann, Edward Yu. "
+            "VAR expected Q4 2026, no date disclosed. Omni charges zero trading fees, "
+            "so cost to farm is Arbitrum gas only."},
+
+    # ── ROLLING: eligibility accrues, no announced close ───────────────
+    {"name":"Miden","chain":"Ethereum ZK","permanent":False,"urgent":False,
+     "cls":"pre_token_rolling","chainKey":"eth","gasUnits":120000,
+     "deadline":None,"deadline_iso":None,
+     "entry_window":"rolling",
+     "eligibility":"10% of supply planned primarily for holders and stakers of Polygon POL. "
+                   "Secondary route via testnet activity. Snapshots began May 2025, ongoing.",
+     "eligibility_tier":"official",
+     "defillama":None,
+     "factors":{"timing":12,"tvl":0,"investors":18,"team":12,"social":3,"onchain":5},
+     "note":"$25M seed 29 Apr 2025 led by a16z crypto, 1kx and Hack VC, with Finality "
+            "Capital, Symbolic Capital, P2 Ventures, Delta Fund, MH Ventures. Angels "
+            "include Rune Christensen (MakerDAO) and Sreeram Kannan (EigenLayer). "
+            "Founders Bobbin Threadbare, Dominik Schmid, Azeem Khan, former Meta engineers, "
+            "spun out of Polygon Labs. Mainnet slipped from Q4 2025 to 2026, reward date TBA. "
+            "NOTE: previously carried a deadline of 'Snapshot closing' and urgent=True. "
+            "No such deadline exists and the main route in is holding POL, not farming."},
+
+    {"name":"Polymarket","chain":"Polygon","permanent":False,"urgent":False,
+     "cls":"pre_token_rolling","chainKey":"polygon","gasUnits":90000,
+     "deadline":None,"deadline_iso":None,
+     "entry_window":"rolling",
+     "eligibility":"No criteria published. Polymarket's help pages state no airdrop or TGE "
+                   "has been announced. Trading activity is the presumed route but is not confirmed.",
+     "eligibility_tier":"reported",
+     "defillama":"polymarket",
+     "factors":{"timing":10,"tvl":16,"investors":14,"team":10,"social":4,"onchain":8},
+     "note":"Promised, not scheduled. CMO Matthew Modabber confirmed a token and airdrop in "
+            "Oct 2025, tied to the US relaunch, which happened May 2026 — but the official "
+            "help pages still say nothing has been announced. Reported 5-10% of supply, not "
+            "official. Collateral moved to pUSD in an Apr 2026 upgrade. "
+            "WARNING: circulating 'eligibility criteria' for POLY (volume gates, allocation "
+            "percentages, eligibility checkers) are fabrications on third-party sites. No "
+            "official channel asks for a signature to check eligibility."},
+
+    # ── CLOSED: eligibility already determined, operator not in it ─────
+    {"name":"Extended","chain":"Arc","permanent":False,"urgent":False,
+     "cls":"pre_token_closed","chainKey":"l2","gasUnits":100000,
+     "deadline":"Signing closes 08:30 UTC 29 Nov","deadline_iso":"2026-11-29",
+     "entry_window":"closed","entry_closed_on":"2026-11-06",
+     "eligibility":"Extended Points programme. Final snapshot completed 6 Nov 2026 — "
+                   "nothing done now creates eligibility. If already eligible: sign the "
+                   "Community Allocation Terms in-app before 08:30 UTC 29 Nov for the first batch.",
+     "eligibility_tier":"official",
+     "defillama":None,
+     "factors":{"timing":0,"tvl":8,"investors":10,"team":9,"social":3,"onchain":6},
+     "note":"XTEN: 300,000,000 tokens, 30% of 1B supply. Contract on Arc "
+            "0x10DEDcBc9601aeC2A941EDbB4D13FcA7Fc820f38. First batch 29 Nov; spot trading "
+            "15:00 UTC 30 Nov; signing window closes 23:59 UTC 31 Dec after which unsigned "
+            "allocations move to the Ecosystem Fund. Founded by former Revolut staff. "
+            "Staked XTEN and XTEN in the 7-day unstaking period cannot be transferred. "
+            "Scored to zero on timing because the window is shut: unreachable, not weak."},
+
+    # ── TOKEN LIVE: not airdrop farming. Kept for context, not ranked ──
+    {"name":"Morpho","chain":"Ethereum","permanent":False,"urgent":False,
+     "cls":"token_live","chainKey":"eth","gasUnits":140000,
+     "deadline":None,"deadline_iso":None,
+     "entry_window":"closed",
+     "eligibility":"Token already distributed. Ongoing MORPHO rewards require providing "
+                   "liquidity in Morpho vaults, scaled by deposit size and duration. "
+                   "That is capital-at-risk yield farming, not airdrop farming.",
+     "eligibility_tier":"official",
+     "defillama":"morpho",
+     "factors":{"timing":0,"tvl":20,"investors":16,"team":12,"social":4,"onchain":12},
+     "note":"MORPHO transferable since 21 Nov 2024. Max supply 1B, market cap around $1.29B, "
+            "listed on Binance, Kraken, Bybit, MEXC, Gate, KuCoin, Bitget. 4.9% already "
+            "distributed to protocol users and launch pool participants. "
+            "Was ranked 2nd at 70 in an airdrop tracker for a token trading two years."},
+
+    {"name":"Aerodrome","chain":"Base","permanent":False,"urgent":False,
+     "cls":"token_live","chainKey":"l2","gasUnits":95000,
+     "deadline":None,"deadline_iso":None,
+     "entry_window":"closed",
+     "eligibility":"AERO live since 2023. Any rewards are liquidity incentives, not an airdrop.",
+     "eligibility_tier":"reported",
+     "defillama":"aerodrome-v2",
+     "factors":{"timing":0,"tvl":14,"investors":10,"team":9,"social":3,"onchain":10},
+     "note":"AERO has been trading since 2023. Reported as renamed to Aero. "
+            "UNVERIFIED: needs the same write-up as Morpho before it is shown anywhere."},
+
+    # ── UNVERIFIED: no airdrop confirmed either way. Not ranked. ───────
+    {"name":"Base L2","chain":"Base","permanent":False,"urgent":False,
+     "cls":"unverified","chainKey":"l2","gasUnits":80000,
+     "deadline":None,"deadline_iso":None,
+     "entry_window":"unknown",
+     "eligibility":"No token and no airdrop announced. Jesse Pollak reported on 21 Nov 2026 "
+                   "as saying Base is 'continuing to explore, but also not being in a rush'.",
+     "eligibility_tier":"reported",
+     "defillama":"base",
+     "factors":{"timing":6,"tvl":18,"investors":14,"team":11,"social":4,"onchain":10},
+     "note":"Coinbase's L2. Large and real, but no airdrop has been announced and the "
+            "most recent signal is explicitly non-committal. Previously carried a "
+            "permanent score floor of 60, which the browser kept applying for two days "
+            "after it was removed from the engine."},
+
+    {"name":"MetaMask","chain":"Ethereum","permanent":False,"urgent":False,
+     "cls":"unverified","chainKey":"eth","gasUnits":100000,
+     "deadline":None,"deadline_iso":None,
+     "entry_window":"unknown",
+     "eligibility":"Long-rumoured, never announced. No criteria from any official source.",
+     "eligibility_tier":"rumour",
+     "defillama":None,
+     "factors":{"timing":5,"tvl":0,"investors":12,"team":10,"social":4,"onchain":6},
+     "note":"UNVERIFIED. Rumoured for years with nothing official. Kept on the watchlist "
+            "only because of its size. Must not be ranked or recommended on rumour."},
+
+    {"name":"Ink (Kraken)","chain":"Ink","permanent":False,"urgent":False,
+     "cls":"unverified","chainKey":"l2","gasUnits":85000,
+     "deadline":None,"deadline_iso":None,
+     "entry_window":"unknown",
+     "eligibility":"Not verified. Kraken's L2. Research outstanding.",
+     "eligibility_tier":"rumour",
+     "defillama":None,
+     "factors":{"timing":6,"tvl":12,"investors":11,"team":10,"social":3,"onchain":8},
+     "note":"UNVERIFIED. TVL resolves via name match. Note that Nado, built on Ink by the "
+            "Kraken team, closed a points programme on 12 Nov 2026 with 33.2M points across "
+            "45,000+ users and no token announced — that is the more interesting target and "
+            "it is not tracked."},
+
+    {"name":"Felix Protocol","chain":"Hyperliquid","permanent":False,"urgent":False,
+     "cls":"unverified","chainKey":"l2","gasUnits":90000,
+     "deadline":None,"deadline_iso":None,
+     "entry_window":"unknown",
+     "eligibility":"Not verified. Research outstanding.",
+     "eligibility_tier":"rumour",
+     "defillama":None,
+     "factors":{"timing":6,"tvl":8,"investors":9,"team":8,"social":2,"onchain":7},
+     "note":"UNVERIFIED. CDP protocol on Hyperliquid. No airdrop confirmed either way."},
+
     {"name":"Loopscale","chain":"Solana","permanent":False,"urgent":False,
-     "deadline":None,"defillama":None,"snapshotProb":71,
-     "gasUnits":30000,"chainKey":"l2",
-     "factors":{"timing":18,"tvl":9,"investors":15,"team":9,"social":4,"onchain":4},
-     "note":"Solana lending protocol. High TVL growth. Deposit SOL or USDC, maintain active position."},
-    {"name":"TreadFi","chain":"Ethereum","permanent":False,"urgent":True,
-     "deadline":"Season 1 ends soon","defillama":None,"snapshotProb":89,
-     "gasUnits":85000,"chainKey":"eth",
-     "factors":{"timing":21,"tvl":7,"investors":14,"team":8,"social":3,"onchain":4},
-     "note":"$3.5M Founders Fund. Algorithmic trading terminal. Season 1 active — use the platform now."},
-    {"name":"Felix Protocol","chain":"HyperEVM","permanent":False,"urgent":False,
-     "deadline":None,"defillama":None,"snapshotProb":76,
-     "gasUnits":55000,"chainKey":"l2",
-     "factors":{"timing":19,"tvl":8,"investors":13,"team":8,"social":3,"onchain":5},
-     "note":"Liquity fork on HyperEVM. Season 2 points live. Borrow against ETH collateral."},
-    {"name":"Backpack","chain":"Solana","permanent":False,"urgent":False,
-     "deadline":None,"defillama":None,"snapshotProb":58,
-     "gasUnits":20000,"chainKey":"l2",
-     "factors":{"timing":17,"tvl":7,"investors":15,"team":9,"social":4,"onchain":3},
-     "note":"BP distributed 23 Mar 2026. All points seasons and the epilogue are closed."},
-    {"name":"Extended","chain":"Ethereum","permanent":False,"urgent":True,
-     "deadline":"November 30 2026","defillama":None,"snapshotProb":64,
-     "gasUnits":90000,"chainKey":"eth",
-     "factors":{"timing":18,"tvl":6,"investors":14,"team":8,"social":3,"onchain":4},
-     "note":"Perp DEX. $XTEN announced 23 Oct 2026 for November launch, 300M tokens (30%) to community. Points programme nearing its cap. Trade perps and use vaults now."},
+     "cls":"unverified","chainKey":"l2","gasUnits":5000,
+     "deadline":None,"deadline_iso":None,
+     "entry_window":"unknown",
+     "eligibility":"Not verified. Research outstanding.",
+     "eligibility_tier":"rumour",
+     "defillama":None,
+     "factors":{"timing":6,"tvl":10,"investors":10,"team":8,"social":2,"onchain":7},
+     "note":"UNVERIFIED. Solana lending. No airdrop confirmed either way."},
 ]
+
+# Retired on 27 Nov 2026 after an X-source audit found no token and, in one
+# case, no pulse. Kept here as a record so they are not silently re-added.
+#
+#   Superposition  Official account silent since 21 May 2025. Users publicly
+#                  reporting stuck Aptos lending positions they cannot repay
+#                  or withdraw (15 and 27 Nov 2026). Listing a protocol whose
+#                  users cannot withdraw is a liability, not a stale record.
+#   Glider         Official statement 19 Nov 2026: "We've never announced a
+#                  token." Points frozen 11 Nov, Discord roles snapshotted
+#                  19 Nov, historical points converted to fee discounts.
+#   TreadFi        No token, points or snapshot announcement. Official posts
+#                  are product-only; the foundation account is silent.
+#   Farcaster      Official account posted two podcast links in a fortnight.
+#                  No token, snapshot or eligibility language anywhere.
+#
+# Previously retired via CONFIRMED_DISTRIBUTED: MegaETH, Monad, Aster Stage 6,
+# Hyperliquid, Backpack.
+RETIRED_NO_TOKEN = {
+    "Superposition": "Dormant since May 2025; users reporting stuck funds",
+    "Glider":        "Protocol confirmed it has never announced a token",
+    "TreadFi":       "No token, points or snapshot signal",
+    "Farcaster":     "No token, snapshot or eligibility signal",
+}
+
+# ── Which protocols belong in the ranking ───────────────────────────────
+#
+# The operator holds no positions in any tracked protocol, so a closed
+# window is worth zero to him however strong the protocol is, and a live
+# token is a different product entirely. Only classes that he can still
+# act on are ranked. The rest are kept and shown, in their own sections,
+# because "we checked this and you cannot get in" is information too.
+
+RANKABLE_CLASSES = ("pre_token_open", "pre_token_rolling")
+
+CLASS_LABELS = {
+    "pre_token_open":    "Open",
+    "pre_token_rolling": "Rolling",
+    "pre_token_closed":  "Closed",
+    "token_live":        "Token live",
+    "unverified":        "Unverified",
+}
+
+
+def is_rankable(p):
+    """True if a new entrant could still qualify for this protocol."""
+    return p.get("cls", "unverified") in RANKABLE_CLASSES
+
+
+def source_tier(p):
+    """official | reported | rumour — governs what may be stated as fact.
+
+    Eligibility criteria are the most dangerous field Hunter carries. A
+    search for Polymarket's criteria returns, top of the page, a site
+    with fabricated telemetry and an invented volume gate for an airdrop
+    the protocol says it has never announced. Anything not from the
+    protocol itself is a discovery hint, never a published criterion.
+    """
+    return p.get("eligibility_tier", "rumour")
+
+
+ELIGIBILITY_WARNING = (
+    "No legitimate airdrop requires signing a message or granting wallet "
+    "access to check eligibility. Criteria shown here come only from the "
+    "protocol's own site or verified account; anything else is marked as "
+    "reported or unverified and should not be acted on."
+)
+
 
 # ── Scoring ──
 def calc_score(p):
@@ -314,7 +447,24 @@ def apply_deadlines(results):
     today = datetime.now(timezone.utc).date()
     expired = 0
     for r in results:
-        d = parse_deadline(r.get("deadline"))
+        # An explicitly authored deadline_iso wins over parsing the prose.
+        #
+        # This function used to derive the date solely from the display
+        # string, so an entry carrying a precise, sourced date alongside
+        # readable prose lost the date entirely: Extended's
+        # "Signing closes 08:30 UTC 29 Nov" does not parse, and its
+        # deadline_iso of 2026-11-29 was being overwritten with None —
+        # silently removing the one deadline on the board that mattered.
+        authored_iso = r.get("deadline_iso")
+        d = None
+        if authored_iso:
+            try:
+                d = datetime.strptime(str(authored_iso)[:10], "%Y-%m-%d").date()
+            except ValueError:
+                hlog(f"  Unparseable deadline_iso on {r['name']}: "
+                     f"{authored_iso!r} — falling back to the display string", "WARN")
+        if d is None:
+            d = parse_deadline(r.get("deadline"))
         if d is None:
             r["deadline_iso"] = None
             r["deadline_passed"] = False
@@ -826,13 +976,84 @@ def run_scan():
     hlog(f"  Scored {len(results)} protocols — {live_factors} live factor(s) applied "
          f"(scoring v{SCORING_VERSION})")
 
-    results.sort(key=lambda x: x["score"], reverse=True)
-    for i, r in enumerate(results): r["rank"] = i + 1
+    # Rank only what the operator can still act on.
+    #
+    # Sorting the whole list by score put a token that has been trading
+    # for two years second, and an unverified protocol third, above the
+    # only confirmed open window. Score measures how promising a protocol
+    # is; it says nothing about whether you can get in. Both matter, and
+    # conflating them is what made the table misleading rather than
+    # merely thin.
+    #
+    # Everything else keeps its score and is still published, in its own
+    # section: "we checked, and you cannot get in" is information too.
+    ranked   = [r for r in results if is_rankable(r)]
+    unranked = [r for r in results if not is_rankable(r)]
+
+    ranked.sort(key=lambda x: x["score"], reverse=True)
+    for i, r in enumerate(ranked):
+        r["rank"] = i + 1
+
+    unranked.sort(key=lambda x: x["score"], reverse=True)
+    for r in unranked:
+        r["rank"] = None          # explicitly not ranked, not rank 0
+        r["rank_excluded_because"] = CLASS_LABELS.get(
+            r.get("cls", "unverified"), r.get("cls"))
+
+    results[:] = ranked + unranked
+    hlog(f"    Ranked {len(ranked)} actionable; {len(unranked)} held back "
+         f"(closed, already issued, or unverified)")
 
     above  = sum(1 for r in results if r["conviction"] != "SUPPRESS")
     urgent = sum(1 for r in results if r.get("urgent"))
     hlog(f"  Scored: {len(results)} protocols — {above} above threshold — {urgent} urgent")
     hlog(f"  Top 3: {results[0]['name']} ({results[0]['score']}), {results[1]['name']} ({results[1]['score']}), {results[2]['name']} ({results[2]['score']})")
+
+    # ── Event detection ────────────────────────────────────────────────
+    #
+    # This was missing entirely. detect_events was only ever reachable
+    # through `hunter_events.py --backfill`, run by hand, so in normal
+    # six-hourly operation Hunter recorded no events at all: the log
+    # froze between manual rebuilds, and the newsletter and the site's
+    # "what changed" section were both reading a static table. An event
+    # log that only updates when someone remembers to update it is a
+    # worse lie than no event log.
+    #
+    # Never fatal: a scan that scores correctly but fails to log an event
+    # is still a good scan.
+    try:
+        from hunter_events import EventLog, detect_events
+        scan_id = datetime.now(timezone.utc).strftime("%Y-%m-%d-%H%M")
+        prev_scan = None
+        _arch = Path(__file__).parent / "briefings"
+        if _arch.is_dir():
+            for _f in sorted(_arch.glob("*.json"), reverse=True):
+                try:
+                    _d = json.loads(_f.read_text())
+                except Exception:
+                    continue
+                # Compare only against schema 3.0: pre-3.0 files lack the
+                # stable id, and keying on display name is what produced
+                # 35 phantom retirement events in the first backfill.
+                if _d.get("schema_version") == "3.0" and _d.get("protocols"):
+                    prev_scan = _d
+                    break
+        if prev_scan:
+            n_events = detect_events(
+                EventLog(),
+                prev_scan.get("protocols") or [],
+                results,
+                scan_id=scan_id,
+                prev_scoring_version=prev_scan.get("scoring_version"),
+                curr_scoring_version=SCORING_VERSION,
+                prev_list_version=prev_scan.get("protocol_list_version"),
+                curr_list_version=PROTOCOL_LIST_VERSION)
+            hlog(f"  Events recorded: {n_events} "
+                 f"(vs {prev_scan.get('scan_id', 'previous scan')})")
+        else:
+            hlog("  No schema 3.0 scan to compare against — no events this run")
+    except Exception as e:
+        hlog(f"  Event detection failed: {type(e).__name__}: {e}", "WARN")
 
     # AI briefing
     hlog("Fetching AI briefing from Vercel...")
@@ -876,7 +1097,12 @@ def run_scan():
     push_scores(output)
 
     # Write top5_snapshot.json
-    top5 = results[:5]
+    # The top five of what is actionable, not of everything scored.
+    # results[:5] swept in a two-year-old traded token and an unverified
+    # protocol, which is exactly what the class split exists to prevent.
+    # If fewer than five are actionable, publish fewer — a short honest
+    # list beats a padded one.
+    top5 = [r for r in results if is_rankable(r)][:5]
     top3_avg      = sum(r["score"] for r in results[:3]) / 3
     market_regime = "Aggressive" if top3_avg >= 70 else "Defensive"
     snapshot = {
@@ -900,7 +1126,6 @@ def run_scan():
                 "conviction":   p["conviction"],
                 "urgent":       p.get("urgent", False),
                 "deadline":     p.get("deadline"),
-                "snapshotProb": p.get("snapshotProb", 50),
                 "gasUnits":     p.get("gasUnits", 80000),
                 "chainKey":     p.get("chainKey", "eth"),
                 "tags":         p.get("tags", []),
@@ -914,8 +1139,13 @@ def run_scan():
             "l2":              [p["name"] for p in top5 if p.get("chainKey") == "l2"],
             "urgent":          [p["name"] for p in top5 if p.get("urgent")],
             "high_conviction": [p["name"] for p in top5 if p.get("conviction") == "HIGH"],
-            "snapshot_open":   [p["name"] for p in top5 if p.get("snapshotProb", 0) >= 60],
-            "low_risk":        [p["name"] for p in top5 if p.get("snapshotProb", 0) >= 70 and p["score"] >= 60],
+            # These two used to filter on snapshotProb, a number that was
+            # never computed from anything. They now filter on facts: can
+            # a new entrant still qualify, and did the protocol itself say
+            # so rather than an aggregator.
+            "entry_open":      [p["name"] for p in top5 if p.get("entry_window") == "open"],
+            "officially_confirmed": [p["name"] for p in top5
+                                     if p.get("eligibility_tier") == "official"],
         }
     }
     SNAPSHOT_FILE.write_text(json.dumps(snapshot, indent=2))
@@ -933,6 +1163,7 @@ def run_scan():
                 "scan_id":         datetime.now(timezone.utc).strftime("%Y-%m-%d-%H%M"),
                 "generated_at":    ts,
                 "scoring_version": SCORING_VERSION,
+                "protocol_list_version": PROTOCOL_LIST_VERSION,
                 "top5":            [p["name"] for p in results[:5]],
                 "above_threshold": above,
                 "urgent":          urgent,

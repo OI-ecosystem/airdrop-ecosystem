@@ -41,13 +41,26 @@ If it matches, the swap is safe. If it does not, the server has changed
 since this build — stop and say so, because overwriting would discard
 whatever changed.
 
+## After pulling (27 Nov audit build)
+
+The protocol list was rebuilt on 27 Nov 2026. Nine protocols were retired
+and classes were introduced, so the event log must be rebuilt once — the
+old log contains deadline and score events derived from records that have
+since been corrected.
+
 ## After pulling
 
     sudo -u hunter python3 -c "import ast,sys; [ast.parse(open(f).read()) for f in sys.argv[1:]]" \
       hunter_app.py hunter_events.py build_newsletter.py
 
-    # Rebuild the event log: the model-stability cutoff changes what counts
+    # Rebuild the event log. Required: the audit changed what counts as
+    # an event, and PROTOCOL_LIST_VERSION now suppresses movements caused
+    # by our own edits rather than reporting them as market activity.
     sudo -u hunter python3 hunter_events.py --reset --backfill
+
+    # hunter_trajectory.json is owned by root and will fail a write from
+    # the timer, which runs as hunter
+    sudo chown hunter:hunter hunter_trajectory.json
 
     # Build this week's issue, then run a scan to publish everything
     sudo -u hunter python3 build_newsletter.py

@@ -1,5 +1,5 @@
 b7c6b6cdae32b06930d4524dcb1e6e56  build_newsletter.py
 2938a4f75723712cb4983f2d4235c483  build_trajectory.py
-bb7c8a7b5a4f9e7f759ce2c6a9b6e306  hunter_app.py
-5d649ea9554c816539e1d3f0921922c1  hunter_events.py
+6719e965a23c965cfcdd95e6b3341289  hunter_app.py
+242be188f2d30c82245e2fe18ec01952  hunter_events.py
 cf09e5fbf01e0e2cb797eabf2cea542c  hunter_feed.py
