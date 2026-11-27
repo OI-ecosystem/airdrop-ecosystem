@@ -500,11 +500,11 @@ footer{border-top:0.5px solid var(--border);padding:24px 0;display:flex;justify-
       <div class="price-amount">£49</div>
       <div class="price-period">per month &middot; cancel anytime</div>
       <ul class="price-features">
-        <li><span class="chk">&#10003;</span>Full top 10 protocols</li>
+        <li><span class="chk">&#10003;</span>Every protocol you can still enter</li>
         <li><span class="chk">&#10003;</span>Conviction scores &amp; reasoning</li>
         <li><span class="chk">&#10003;</span>Specific farming actions</li>
         <li><span class="chk">&#10003;</span>Gas cost ROI calculator</li>
-        <li><span class="chk">&#10003;</span>Telegram weekly delivery</li>
+        <li><span class="chk">&#10003;</span>Weekly issue by email</li>
                       </ul>
       <button class="price-btn price-btn-g" onclick="subscribe('standard')">Start Hunter</button>
     </div>
@@ -633,6 +633,8 @@ async function loadLiveScores(){
       BRIEFING_DELAYED_DAYS = d.ai_briefing_delayed_days || 7;
       EVENTS     = Array.isArray(d.events) ? d.events : [];
       FUNNEL     = d.funnel || null;
+      if(Array.isArray(d.factor_model) && d.factor_model.length)
+        FMODEL = d.factor_model;
       REGIME     = d.market_regime || null;
       ARCHIVE_N  = d.archive_scans || null;
       HISTORY    = d.history || {};
@@ -977,10 +979,13 @@ function bannerText(protocols, liveTvls){
                  + "No dated deadlines this scan."
             : "Live signal: scan in progress.";
   } else {
-    const named = urgent.slice(0,3).map(p=>{
+    const PROSE_MAX = 3;   // a sentence cap, not a data cap
+    let named = urgent.slice(0, PROSE_MAX).map(p=>{
       const d = p.deadline ? ` — ${p.deadline}` : "";
       return `${p.name} (${p.score}/100)${d}`;
     }).join(", ");
+    if(urgent.length > PROSE_MAX)
+      named += ` and ${urgent.length - PROSE_MAX} more`;
     const more = urgent.length > 3 ? ` +${urgent.length-3} more` : "";
     s = `Live signal: ${named}${more} — flagged URGENT this scan.`;
   }
@@ -1082,17 +1087,40 @@ async function buildTable(){
      handing over the numbers, which stay behind the Pro tier. A reader
      can see at a glance that Miden's score is nearly all investors and
      team — i.e. judgement — while Polymarket's carries real TVL. */
-  const FACTOR_COLS = {timing:"#B4451A", tvl:"#1C5B52", investors:"#0C447C",
-                       team:"#4B2E78", onchain:"#3B6D11", social:"#8A5A0B"};
-  const FACTOR_MAX  = {timing:25, tvl:20, investors:20, team:15, onchain:15, social:5};
+  /* The model arrives with the data (payload.factor_model) so that
+     changing it in Python changes the site with no edit here — a
+     seventh factor renders on the next scan. The literal below is a
+     fallback for the bundled offline snapshot only, which predates
+     the field. FMODEL is rebuilt on every paint, not cached. */
+  const FACTOR_FALLBACK = [
+    {key:"timing",    label:"Timing",         max:25, colour:"#B4451A"},
+    {key:"tvl",       label:"TVL trajectory", max:20, colour:"#1C5B52"},
+    {key:"investors", label:"Investors",      max:20, colour:"#0C447C"},
+    {key:"team",      label:"Team",           max:15, colour:"#4B2E78"},
+    {key:"onchain",   label:"On-chain",       max:15, colour:"#3B6D11"},
+    {key:"social",    label:"Social",         max: 5, colour:"#8A5A0B"}
+  ];
+  let FMODEL = FACTOR_FALLBACK;
+  /* Any factor present in the data but absent from the model is still
+     drawn, so a new factor is never silently dropped if the model
+     field is missing or stale. Its max falls back to the value seen. */
+  function factorModelFor(p){
+    const seen = Object.keys(p.factors || {});
+    const known = new Set(FMODEL.map(f=>f.key));
+    const extra = seen.filter(k=>!known.has(k)).map(k=>({
+      key:k, label:k.charAt(0).toUpperCase()+k.slice(1),
+      max: Math.max(1, Math.ceil((p.factors[k]||0))), colour:"#6B6B6B"
+    }));
+    return FMODEL.concat(extra);
+  }
   function factorStrip(p){
     const f = p.factors; if(!f) return "";
     const total = Object.values(f).reduce((a,b)=>a+(b||0),0) || 1;
-    const segs = Object.entries(FACTOR_MAX).map(([k,max])=>{
+    const segs = factorModelFor(p).map(({key:k,max,colour})=>{
       const v = f[k] || 0;
       if(!v) return "";
       const live = (p.factor_sources||{})[k] && (p.factor_sources||{})[k] !== "static";
-      return `<span title="${k}: ${v}/${max}${live?" (measured live)":" (assessed)"}" style="width:${(v/total*100).toFixed(1)}%;background:${FACTOR_COLS[k]};opacity:${live?1:0.45};"></span>`;
+      return `<span title="${k}: ${v}/${max}${live?" (measured live)":" (assessed)"}" style="width:${(v/total*100).toFixed(1)}%;background:${colour};opacity:${live?1:0.45};"></span>`;
     }).join("");
     return `<div class="fstrip" title="Where this score comes from. Solid segments are measured live; faded are assessed.">${segs}</div>`;
   }
@@ -1102,13 +1130,13 @@ async function buildTable(){
      which parts are measured and which are our judgement. */
   function factorRows(p){
     const f = p.factors; if(!f) return "<p class='rsn-note'>No factor data.</p>";
-    return Object.entries(FACTOR_MAX).map(([k,max])=>{
+    return factorModelFor(p).map(({key:k,label,max,colour})=>{
       const v = f[k] || 0;
       const src = (p.factor_sources||{})[k] || "static";
       const live = src !== "static";
       return `<div class="frow">
-        <span class="frow-k">${k}</span>
-        <span class="frow-bar"><i style="width:${(v/max*100).toFixed(0)}%;background:${FACTOR_COLS[k]};opacity:${live?1:0.4};"></i></span>
+        <span class="frow-k">${label}</span>
+        <span class="frow-bar"><i style="width:${(v/max*100).toFixed(0)}%;background:${colour};opacity:${live?1:0.4};"></i></span>
         <span class="frow-v">${v}<small>/${max}</small></span>
         <span class="frow-s ${live?"frow-live":""}" title="${live?"Measured from live data this scan":"Assessed by research; changes rarely"}">${live?"live":"assessed"}</span>
       </div>`;
@@ -1222,9 +1250,15 @@ function updateROI(){
   document.getElementById("eth-price-val").textContent="$"+ethPrice.toLocaleString();
   document.getElementById("gas-price-val").textContent=gasGwei+" gwei";
   document.getElementById("wallet-count-val").textContent=wallets+" wallet"+(wallets>1?"s":"");
-  const top6=(window._protocols||ALL_PROTOCOLS.map(p=>({...p,score:baseScore(p)}))).slice(0,6);
+  /* Every protocol you can actually enter gets costed, however many
+     there are. Held-back protocols are excluded because gas on
+     something you cannot enter is a meaningless number, not because
+     of any display limit. */
+  const all = window._protocols
+            || ALL_PROTOCOLS.map(p=>({...p,score:baseScore(p)}));
+  const costable = all.filter(p => p.rank || !("rank" in p));
   let html="";
-  top6.forEach(p=>{
+  costable.forEach(p=>{
     const multiplier=CHAIN_GAS_PRICES[p.chainKey]||1;
     const gasPerTx=(p.gasUnits*gasGwei*1e-9)*ethPrice*multiplier;
     const txPerMonth=12;
