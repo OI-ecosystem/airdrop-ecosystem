@@ -36,7 +36,24 @@ OUT_DIR = APP_DIR / "newsletters"
 
 NEWSLETTER_ENDPOINT = "https://rcloop-proxy.vercel.app/api/scores?view=newsletter"
 AI_ENDPOINT = "https://rcloop-proxy.vercel.app/api/ai"
-HUNTER_KEY = os.environ.get("HUNTER_KEY", "")
+def _config():
+    """Read hunter_config.json, the same file hunter_app.py reads.
+
+    This previously read HUNTER_KEY from the environment — a convention
+    that exists nowhere else in this codebase and was never set, so the
+    publish step sent an empty key and the proxy answered 401. One
+    module inventing its own way to find a credential is how that
+    happens; both now read the same file.
+    """
+    try:
+        f = APP_DIR / "hunter_config.json"
+        return json.loads(f.read_text()) if f.exists() else {}
+    except Exception:
+        return {}
+
+CONFIG = _config()
+HUNTER_KEY = CONFIG.get("hunter_key") or os.environ.get("HUNTER_KEY", "")
+AI_ENABLED = CONFIG.get("ai_enabled", True)
 
 # Events worth leading on, most consequential first. Anything not listed
 # is supporting detail rather than a headline.
@@ -349,11 +366,43 @@ def ai_prose(d):
             log(f"AI pass returned {r.status_code}", "WARN")
             return None
         body = r.json()
-        return (body.get("text") or body.get("content")
-                or body.get("completion") or "").strip() or None
+        return _extract_text(body)
     except Exception as e:
-        log(f"AI pass failed, publishing data-only: {type(e).__name__}", "WARN")
+        # Log the message, not just the class. "AttributeError" alone
+        # cost a round trip to diagnose; the message names the field.
+        log(f"AI pass failed, publishing data-only: {type(e).__name__}: {e}", "WARN")
         return None
+
+
+def _extract_text(body):
+    """Pull the text out of whatever shape the proxy returns.
+
+    The endpoint answers in Anthropic's format, where content is a list
+    of blocks: {"content": [{"type":"text","text":"..."}]}. Treating it
+    as a string is what raised AttributeError — a list is truthy, so it
+    passed straight through an `or` chain and into .strip().
+    """
+    if body is None:
+        return None
+    if isinstance(body, str):
+        return body.strip() or None
+    if isinstance(body, list):
+        parts = [_extract_text(b) for b in body]
+        joined = "\n".join(x for x in parts if x)
+        return joined.strip() or None
+    if isinstance(body, dict):
+        blocks = body.get("content")
+        if isinstance(blocks, list):
+            return _extract_text(blocks)
+        for k in ("text", "completion", "message", "output"):
+            v = body.get(k)
+            if isinstance(v, str) and v.strip():
+                return v.strip()
+            if isinstance(v, (list, dict)):
+                got = _extract_text(v)
+                if got:
+                    return got
+    return None
 
 
 def publish(payload):

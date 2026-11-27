@@ -50,7 +50,22 @@ SNAPSHOT_FILE  = Path(__file__).parent / 'top5_snapshot.json'
 
 # ── 1LINE Farm push config ────────────────────────────
 FARM_ENDPOINT  = 'https://rcloop-proxy.vercel.app/api/farm-snapshot'
-HUNTER_KEY     = 'Hunter333'
+# Read from hunter_config.json, which stays on the server and is never
+# committed. This was a literal in the source, and on 27 Nov 2026 that
+# source was published to a public repository so the server could pull
+# its modules by curl — exposing a key that authorises writes to the
+# scores and farm endpoints. The key has been rotated; the lesson is that
+# code and credentials must not travel together, because the moment code
+# becomes shareable the credential goes with it.
+#
+# No fallback value on purpose. A default here would let the module run
+# with a key that is either wrong or public, and fail later at an HTTP
+# layer with a 401 that looks like a network problem.
+HUNTER_KEY = CONFIG.get("hunter_key") or ""
+# The warning for a missing key lives in run_scan, not here: hlog is
+# defined below this line, and calling it at import time raised a
+# NameError that stopped the module loading at all — a dead engine
+# rather than a misconfigured one.
 
 # ── Logging ──────────────────────────────────────────
 # journald timestamps every line automatically, but the ts/level prefix is
@@ -1008,6 +1023,11 @@ def run_scan():
     urgent = sum(1 for r in results if r.get("urgent"))
     hlog(f"  Scored: {len(results)} protocols — {above} above threshold — {urgent} urgent")
     hlog(f"  Top 3: {results[0]['name']} ({results[0]['score']}), {results[1]['name']} ({results[1]['score']}), {results[2]['name']} ({results[2]['score']})")
+
+    if not HUNTER_KEY:
+        hlog("No hunter_key in hunter_config.json. The scan will complete "
+             "but pushes to Vercel will be rejected with 401, so the site "
+             "will keep serving the previous scan.", "WARN")
 
     # ── Event detection ────────────────────────────────────────────────
     #
