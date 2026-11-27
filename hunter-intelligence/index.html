@@ -89,6 +89,53 @@ h1 em{font-style:normal;color:var(--green);}
 .ev-high{background:#E2F0EE;color:#1C5B52;}
 .ev-part{background:#F3EDE2;color:#7A5B18;}
 .ev-none{background:transparent;color:var(--text3);border-color:var(--line);}
+
+/* momentum under the TVL figure */
+.mom{font-size:10px;font-weight:500;letter-spacing:-0.01em;margin-top:2px;white-space:nowrap;}
+.mom-up{color:#3B6D11;}
+.mom-down{color:#B4451A;}
+
+/* six-factor composition strip */
+.fstrip{display:flex;height:3px;border-radius:2px;overflow:hidden;margin-top:5px;max-width:190px;background:var(--line);}
+.fstrip span{display:block;height:100%;}
+
+/* per-protocol reasoning panel */
+.rsn-toggle{padding:0 0 10px 32px;margin-top:-6px;border-bottom:1px solid var(--line);}
+.rsn-toggle button{background:#fff;border:1px solid var(--line);border-radius:5px;padding:4px 11px;font:inherit;font-size:10.5px;color:var(--text2);cursor:pointer;letter-spacing:0.01em;}
+.rsn-toggle button:hover{border-color:#B9B2A6;color:var(--text);}
+.rsn-toggle button:hover{color:var(--text);}
+.reason{padding:14px 18px 16px 32px;background:#FAF8F4;border-bottom:1px solid var(--line);}
+.rsn-grid{display:grid;grid-template-columns:1fr 260px;gap:26px;}
+.rsn-h{font-size:9px;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin:0 0 6px;}
+.rsn-main .rsn-h:not(:first-child){margin-top:14px;}
+.rsn-note{font-size:12.5px;line-height:1.65;color:var(--text2);margin:0;}
+.tier-official{font-size:9px;background:#E2F0EE;color:#1C5B52;padding:1px 6px;border-radius:99px;margin-left:5px;letter-spacing:0.04em;}
+.tier-reported{font-size:9px;background:#F3EDE2;color:#7A5B18;padding:1px 6px;border-radius:99px;margin-left:5px;letter-spacing:0.04em;}
+.tier-rumour,.tier-unverified{font-size:9px;background:transparent;color:var(--text3);border:1px solid var(--line);padding:0 6px;border-radius:99px;margin-left:5px;letter-spacing:0.04em;}
+.frow{display:grid;grid-template-columns:62px 1fr 42px 46px;gap:7px;align-items:center;margin-bottom:5px;}
+.frow-k{font-size:10px;color:var(--text2);text-transform:capitalize;}
+.frow-bar{height:5px;background:#EDE9E1;border-radius:3px;overflow:hidden;}
+.frow-bar i{display:block;height:100%;border-radius:3px;}
+.frow-v{font-size:10px;text-align:right;color:var(--text);font-variant-numeric:tabular-nums;}
+.frow-v small{color:var(--text3);}
+.frow-s{font-size:8px;text-transform:uppercase;letter-spacing:0.05em;color:var(--text3);text-align:right;}
+.frow-live{color:#3B6D11;font-weight:600;}
+.rsn-meta{font-size:10px;color:var(--text3);line-height:1.6;margin-top:10px;padding-top:9px;border-top:1px solid var(--line);}
+@media(max-width:700px){.rsn-grid{grid-template-columns:1fr;gap:16px;}.reason{padding-left:16px;}.rsn-toggle{padding-left:16px;}}
+
+/* discovery funnel */
+.fn-row{display:grid;grid-template-columns:168px 1fr 68px;grid-template-areas:"label track n" ". sub sub";gap:3px 12px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line);}
+.fn-label{grid-area:label;font-size:12px;color:var(--text);}
+.fn-track{grid-area:track;height:13px;background:#E8E3D8;border-radius:5px;overflow:hidden;}
+.fn-bar{height:100%;background:linear-gradient(90deg,#7FA247,#4A7C14);border-radius:5px;transition:width .5s ease;}
+.fn-bar-last{background:linear-gradient(90deg,#4A7C14,#2F5A06);}
+.fn-n{grid-area:n;text-align:right;font-size:13px;font-variant-numeric:tabular-nums;color:var(--text2);}
+.fn-n-last{color:#3B6D11;font-weight:600;font-size:15px;}
+.fn-sub{grid-area:sub;font-size:10px;color:var(--text3);}
+@media(max-width:640px){
+  .fn-row{grid-template-columns:1fr 60px;grid-template-areas:"label n" "track track" "sub sub";}
+  .p-spark,.p-chain{display:none;}
+}
 .route-row{display:flex;gap:10px;align-items:baseline;padding:0 0 11px 32px;margin-top:-4px;border-bottom:1px solid var(--line);}
 .route-row.locked{padding-bottom:11px;}
 .route-label{flex:0 0 86px;font-size:9px;text-transform:uppercase;letter-spacing:0.05em;color:var(--text3);padding-top:2px;}
@@ -143,7 +190,7 @@ h1 em{font-style:normal;color:var(--green);}
 .roi-control-val{font-size:13px;font-weight:600;width:60px;text-align:right;}
 
 /* PRICING */
-.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:48px;}
+.pricing-grid{display:grid;grid-template-columns:repeat(2,1fr);max-width:640px;margin-left:auto;margin-right:auto;gap:10px;margin-bottom:48px;}
 .price-card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:20px;}
 .price-card.featured{border:2px solid var(--green);}
 .price-badge{font-size:11px;background:var(--green-bg);color:var(--green-dark);padding:3px 10px;border-radius:99px;display:inline-block;margin-bottom:12px;}
@@ -197,23 +244,36 @@ footer{border-top:0.5px solid var(--border);padding:24px 0;display:flex;justify-
 </div>
 
 <section class="hero">
-  <div class="hero-badge">AI-powered &middot; Rescored every 6 hours &middot; 20 protocols tracked</div>
+  <div class="hero-badge" id="hero-badge">Rescored every 6 hours</div>
   <h1>Stop guessing.<br>Farm with <em>conviction.</em></h1>
-  <p class="hero-sub">Hunter scores every major airdrop protocol on a 6-factor model, rescored every six hours and archived since August. Live TVL, gas-cost ROI per protocol, and a published record of what we said and when.</p>
+  <p class="hero-sub" id="hero-sub">Hunter scans the whole of DeFi every six hours and tells you the few protocols you can still get into &mdash; and which ones are already dead.</p>
   <div class="hero-actions">
-    <a href="#pricing" class="btn btn-primary">Start free &mdash; top 3 protocols</a>
+    <a href="#pricing" class="btn btn-primary">See this week's rankings</a>
     <a href="#tools" class="btn">See the intelligence tools</a>
   </div>
   <p class="hero-note">No wallet required &middot; No code &middot; Cancel anytime</p>
 </section>
 
 <div class="stats-row">
-  <div class="stat"><div class="stat-val">20</div><div class="stat-label">Protocols scored</div></div>
+  <div class="stat"><div class="stat-val" id="stat-scored">&ndash;</div><div class="stat-label">Protocols scored</div></div>
   <div class="stat"><div class="stat-val">6</div><div class="stat-label">Scoring factors</div></div>
-  <div class="stat"><div class="stat-val" id="stat-above">14</div><div class="stat-label">Above threshold</div></div>
-  <div class="stat"><div class="stat-val" id="stat-urgent">3</div><div class="stat-label">Urgent signals</div></div>
+  <div class="stat"><div class="stat-val" id="stat-above">&ndash;</div><div class="stat-label">You can enter</div></div>
+  <div class="stat"><div class="stat-val" id="stat-urgent">&ndash;</div><div class="stat-label">Dated deadlines</div></div>
 </div>
 
+
+<div class="feature-section" id="funnel-section" style="display:none;">
+  <div class="feature-header">
+    <div class="section-title" style="margin-bottom:0;">What it took to get to this list</div>
+    <span class="feature-badge" id="regime-badge" style="background:#EFEDEA;color:#6B6762;">&nbsp;</span>
+  </div>
+  <p style="font-size:13px;color:var(--text2);margin-bottom:18px;line-height:1.6;">
+    Every scan starts with the entire DeFi universe and discards almost all of it. These are the
+    actual counts from the most recent run, not an illustration &mdash; the arithmetic is yours to check.
+  </p>
+  <div id="funnel-bars"></div>
+  <div class="tvl-note" id="funnel-note" style="margin-top:14px;"></div>
+</div>
 
 <div id="protocols" class="protocols-section">
   <div class="section-title">This week's rankings &mdash; live TVL from DefiLlama</div>
@@ -377,6 +437,46 @@ footer{border-top:0.5px solid var(--border);padding:24px 0;display:flex;justify-
 </div>
 
 <!-- PRICING -->
+
+<!-- WHAT'S COMING — real pipeline, honest statuses, nothing teased that
+     doesn't exist. Deliberately no token talk: pre-announcing a token to
+     build demand is a regulated financial promotion in the UK. -->
+<div class="feature-section" id="roadmap">
+  <div class="feature-header">
+    <div class="section-title" style="margin-bottom:0;">Where this is heading</div>
+    <span class="feature-badge" style="background:#E6F1FB;color:#0C447C;">In build</span>
+  </div>
+  <p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6;">
+    Hunter is the intelligence layer of a larger system. Each piece below exists and is
+    being built in the open &mdash; statuses are real, not aspirational.
+  </p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;">
+    <div style="border:1px solid var(--line);border-radius:8px;padding:14px 16px;">
+      <div style="font-size:13px;font-weight:600;color:var(--text);">Sentinel <span style="font-size:10px;font-weight:500;color:#7A5B18;background:#F3EDE2;padding:1px 7px;border-radius:99px;margin-left:6px;">In build</span></div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.55;margin-top:6px;">
+        Automated farming on Hunter's signals. Hunter emits machine-readable actions &mdash;
+        chain, route, deadline, cost &mdash; and Sentinel executes them, with every action
+        approved by a human before it spends anything. Single wallet, anti-Sybil-clean by design.
+      </div>
+    </div>
+    <div style="border:1px solid var(--line);border-radius:8px;padding:14px 16px;">
+      <div style="font-size:13px;font-weight:600;color:var(--text);">Signal 333 <span style="font-size:10px;font-weight:500;color:#3B6D11;background:#EAF3DE;padding:1px 7px;border-radius:99px;margin-left:6px;">Built</span></div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.55;margin-top:6px;">
+        Algorithmic trading engine covering arbitrage and flash-loan strategies, built by a
+        former LIFFE derivatives trader. Hunter's event intelligence becomes one of its inputs.
+      </div>
+    </div>
+    <div style="border:1px solid var(--line);border-radius:8px;padding:14px 16px;">
+      <div style="font-size:13px;font-weight:600;color:var(--text);">Signal Intelligence <span style="font-size:10px;font-weight:500;color:#3B6D11;background:#EAF3DE;padding:1px 7px;border-radius:99px;margin-left:6px;">Running since June</span></div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.55;margin-top:6px;">
+        The pattern-detection layer, running continuously since June 2026. Its next version
+        carries behavioural fingerprinting (HPI v2) &mdash; reading how market participants act,
+        not just what prices do.
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="pricing">
   <div class="section-title">Choose your tier</div>
   <div class="pricing-grid">
@@ -396,7 +496,7 @@ footer{border-top:0.5px solid var(--border);padding:24px 0;display:flex;justify-
     </div>
     <div class="price-card featured">
       <div class="price-badge">Most popular</div>
-      <div class="price-name">Standard</div>
+      <div class="price-name">Hunter</div>
       <div class="price-amount">£49</div>
       <div class="price-period">per month &middot; cancel anytime</div>
       <ul class="price-features">
@@ -406,28 +506,13 @@ footer{border-top:0.5px solid var(--border);padding:24px 0;display:flex;justify-
         <li><span class="chk">&#10003;</span>Gas cost ROI calculator</li>
         <li><span class="chk">&#10003;</span>Telegram weekly delivery</li>
                       </ul>
-      <button class="price-btn price-btn-g" onclick="subscribe('standard')">Start Standard</button>
+      <button class="price-btn price-btn-g" onclick="subscribe('standard')">Start Hunter</button>
     </div>
-    <div class="price-card">
-      <div class="price-name">Pro</div>
-      <div class="price-amount">£149</div>
-      <div class="price-period">per month &middot; not yet available</div>
-      <ul class="price-features">
-        <li><span class="chk">&#10003;</span>All 20 protocols ranked</li>
-        <li><span class="chk">&#10003;</span>Full factor breakdowns</li>
-        <li><span class="chk">&#10003;</span>Mid-week urgent alerts</li>
-        <li><span class="chk">&#10003;</span>Score trajectory per protocol</li>
-        <li><span class="chk">&#10003;</span>Persistence &amp; weekly movers</li>
-        <li><span class="chk">&#10003;</span>Historical replay</li>
-        <li><span class="chk">&#10003;</span>Published track record</li>
-        <li><span class="chk">&#10003;</span>API access to all scores</li>
-      </ul>
-      <button class="price-btn price-btn-o" disabled
-              style="opacity:0.55;cursor:not-allowed;">Launching soon</button>
-      <div style="font-size:11px;color:var(--text3);margin-top:8px;text-align:center;line-height:1.4;">
-        Built on the archive. Opens when each feature is real.
-      </div>
-    </div>
+    
+  </div>
+  <div style="max-width:640px;margin:14px auto 0;padding:15px 18px;border:1px solid var(--line);border-radius:8px;background:#FAF8F4;text-align:center;">
+    <div style="font-size:13px;color:var(--text);margin-bottom:5px;">Want the farming done for you?</div>
+    <div style="font-size:12.5px;color:var(--text2);line-height:1.6;">Hunter tells you what to farm and by when. <strong>Sentinel</strong> is the separate automation layer that acts on it &mdash; three-wallet air-gap, six security gates before any signature, and your vault never touched by the engine.</div>
   </div>
 </div>
 
@@ -524,6 +609,9 @@ let BRIEFING_DELAYED      = null;
 let BRIEFING_DELAYED_SCAN = null;
 let BRIEFING_DELAYED_DAYS = 7;
 let EVENTS     = [];
+let FUNNEL     = null;
+let REGIME     = null;
+let ARCHIVE_N  = null;
 let HISTORY    = {};
 let NEWSLETTER = null;
 
@@ -544,6 +632,9 @@ async function loadLiveScores(){
       BRIEFING_DELAYED_SCAN = d.ai_briefing_delayed_scan || null;
       BRIEFING_DELAYED_DAYS = d.ai_briefing_delayed_days || 7;
       EVENTS     = Array.isArray(d.events) ? d.events : [];
+      FUNNEL     = d.funnel || null;
+      REGIME     = d.market_regime || null;
+      ARCHIVE_N  = d.archive_scans || null;
       HISTORY    = d.history || {};
       NEWSLETTER = d.newsletter_delayed || null;
     }
@@ -553,6 +644,7 @@ async function loadLiveScores(){
   renderDataStatus();
   renderBriefing();
   renderEvents();
+  renderFunnel();
 }
 
 /* ── Event feed ──────────────────────────────────────────────────────
@@ -590,6 +682,55 @@ function eventDate(e){
   if(days > -2) return "yesterday";
   if(days > -31) return `${Math.abs(days)} days ago`;
   return d.toLocaleDateString(undefined,{month:"short", year:"numeric"});
+}
+
+function renderFunnel(){
+  const sec = document.getElementById("funnel-section");
+  if(!sec || !FUNNEL || !FUNNEL.scanned){ if(sec) sec.style.display="none"; return; }
+  sec.style.display = "block";
+
+  const f = FUNNEL;
+  /* Stages are cumulative survivors, not the rejection buckets, because
+     a reader reads top to bottom and expects each bar to be what is
+     left — not what was thrown away at that step. */
+  const afterTokens = f.scanned - (f.have_tokens || 0);
+  const stages = [
+    ["Protocols on DefiLlama",        f.scanned,                      "everything, every scan"],
+    ["No token yet",                  afterTokens,                    `${(f.have_tokens||0).toLocaleString()} already have one`],
+    ["Large and old enough",          (f.farmable||0) + (f.wrong_category||0) + (f.custodial||0),
+                                      `${(f.too_small||0).toLocaleString()} under the TVL floor, ${(f.too_new||0).toLocaleString()} too new`],
+    ["Farmable category",             f.farmable,                     `${(f.wrong_category||0).toLocaleString()} wrong type, ${(f.custodial||0).toLocaleString()} custodial`],
+    ["Tracked by Hunter",             (ALL_PROTOCOLS||[]).length,      "admitted after quarantine"],
+    ["You can still enter",           (ALL_PROTOCOLS||[]).filter(p=>p.rank).length, "open or rolling windows"],
+  ];
+  const max = Math.max(...stages.map(s => s[1] || 0)) || 1;
+  document.getElementById("funnel-bars").innerHTML = stages.map(([label, n, sub], i) => {
+    /* sqrt scale: a linear bar makes everything after step one invisible
+       when the first number is 9,000 and the last is 6. */
+    const w = Math.max(1.5, Math.sqrt((n || 0) / max) * 100);
+    const last = i === stages.length - 1;
+    return `<div class="fn-row">
+      <div class="fn-label">${label}</div>
+      <div class="fn-track"><div class="fn-bar${last?" fn-bar-last":""}" style="width:${w.toFixed(1)}%;"></div></div>
+      <div class="fn-n${last?" fn-n-last":""}">${(n||0).toLocaleString()}</div>
+      <div class="fn-sub">${sub}</div>
+    </div>`;
+  }).join("");
+
+  const rb = document.getElementById("regime-badge");
+  if(REGIME){
+    rb.textContent = REGIME + " market";
+    const def = REGIME.toLowerCase() === "defensive";
+    rb.style.background = def ? "#F3E4E4" : "#EAF3DE";
+    rb.style.color      = def ? "#8C2F2F" : "#3B6D11";
+    rb.title = def
+      ? "Top-3 average score is below 70: fewer high-conviction windows than usual."
+      : "Top-3 average score is 70 or above: unusually strong set of open windows.";
+  } else { rb.textContent = ""; }
+
+  document.getElementById("funnel-note").textContent =
+    (ARCHIVE_N ? `${ARCHIVE_N.toLocaleString()} scans archived since August. ` : "")
+    + "Counts come from the most recent scan and move between runs as protocols launch, grow and issue tokens.";
 }
 
 function renderEvents(){
@@ -850,7 +991,14 @@ function bannerText(protocols, liveTvls){
 /* ── BUILD PROTOCOL TABLE ── */
 async function buildTable(){
   const table=document.getElementById("protocol-table");
-  const protocols=ALL_PROTOCOLS.map(p=>({...p,score:baseScore(p),tvl:null}));
+  /* Keep the server's TVL. This used to set tvl:null and re-fetch every
+     figure in the browser, which threw away work the engine does better:
+     the server resolves parent-vs-child protocols (Morpho was reading
+     $9.3B instead of $19.1B until it did) and falls back to chain-level
+     TVL when a protocol has no slug of its own. Ink resolves only that
+     way, so the browser's slug-only fetch left $460M rendering as a
+     dash. The client now refreshes what it can and keeps the rest. */
+  const protocols=ALL_PROTOCOLS.map(p=>({...p,score:baseScore(p)}));
   const slugMap={};
   protocols.forEach(p=>{if(p.defillama)slugMap[p.defillama]=p;});
   await Promise.all(Object.entries(slugMap).map(async([slug,proto])=>{
@@ -862,20 +1010,53 @@ async function buildTable(){
      matters more than cosmetically: the engine deliberately withholds a
      rank from protocols you cannot act on, and a client-side sort by
      score puts a two-year-old traded token back at the top. */
-  const ranked   = protocols.filter(p => p.rank)
-                            .sort((a,b) => a.rank - b.rank);
-  const heldBack = protocols.filter(p => !p.rank)
-                            .sort((a,b) => b.score - a.score);
+  /* Live records always carry a rank key — a number when the protocol is
+     actionable, explicitly null when the engine held it back. The bundled
+     snapshot has no rank key at all. Without that distinction the cold
+     paint filtered everything out and flashed "nothing you can enter"
+     before the live data arrived, which is worse than a spinner. */
+  const haveRanks = protocols.some(p => "rank" in p);
+  let ranked, heldBack;
+  if (haveRanks) {
+    ranked   = protocols.filter(p => p.rank).sort((a,b) => a.rank - b.rank);
+    heldBack = protocols.filter(p => !p.rank).sort((a,b) => b.score - a.score);
+  } else {
+    ranked   = protocols.slice().sort((a,b) => b.score - a.score);
+    ranked.forEach((p,i) => p.rank = i + 1);
+    heldBack = [];
+  }
   /* The headline stat used to be "above threshold", which counted any
      protocol scoring over 55 — including ones whose window had shut.
      What a reader needs first is how many they can actually enter. */
-  document.getElementById("stat-above").textContent = ranked.length;
+  /* Every tile reads from the scan. Two were literals typed in June
+     ("20 protocols scored" when eleven are scored), and the fourth was
+     counting open windows under an "Urgent signals" label while the
+     engine reported zero urgent — a tile that cannot be wrong is also
+     a tile that cannot be right. */
+  document.getElementById("stat-scored").textContent = protocols.length;
+  document.getElementById("stat-above").textContent  = ranked.length;
   document.getElementById("stat-urgent").textContent =
-    ranked.filter(p => p.entry_window === "open").length;
+    (EVENTS || []).filter(e => e.status === "upcoming").length;
+
+  /* The strongest honest claim this product has is the ratio, and it
+     was buried in a grey table reading like an apology. A number that
+     unflattering is one nobody fabricates, which is exactly why it
+     persuades. */
+  const hs = document.getElementById("hero-sub");
+  if (hs && FUNNEL && FUNNEL.scanned) {
+    hs.innerHTML = `We scanned <strong>${FUNNEL.scanned.toLocaleString()}</strong> protocols this morning `
+      + `and found <strong>${ranked.length}</strong> you can still enter. `
+      + `${heldBack.length} more were checked and rejected — we publish those too, and why.`;
+  }
+
+  const hb = document.getElementById("hero-badge");
+  if (hb) hb.textContent =
+    `Rescored every 6 hours \u00b7 ${protocols.length} protocols scored \u00b7 ` +
+    `${ranked.length} you can still enter`;
   const liveTvls=protocols.filter(p=>p.tvl).map(p=>p.name);
   if(liveTvls.length>0){
     document.getElementById("live-banner-text").textContent=bannerText(protocols,liveTvls);
-    document.getElementById("tvl-note").textContent=`TVL data live from DefiLlama for ${liveTvls.length} protocols. Last fetched: ${new Date().toLocaleTimeString()}.`;
+    document.getElementById("tvl-note").textContent=`TVL from DefiLlama. ${liveTvls.length} refreshed in your browser just now; the rest resolved by the last scan, including chain-level figures the browser cannot fetch.`;
   } else {
     document.getElementById("live-banner-text").textContent=bannerText(protocols,[]);
     document.getElementById("tvl-note").textContent="TVL data from DefiLlama. Refreshes every 6 hours.";
@@ -897,21 +1078,100 @@ async function buildTable(){
     return `<span title="${w.title}" style="font-size:9px;text-transform:uppercase;letter-spacing:0.05em;background:${w.bg};color:${w.fg};padding:1px 6px;border-radius:99px;white-space:nowrap;">${w.label}</span>`;
   }
 
+  /* Six factors as one strip. Shows the shape of a score without
+     handing over the numbers, which stay behind the Pro tier. A reader
+     can see at a glance that Miden's score is nearly all investors and
+     team — i.e. judgement — while Polymarket's carries real TVL. */
+  const FACTOR_COLS = {timing:"#B4451A", tvl:"#1C5B52", investors:"#0C447C",
+                       team:"#4B2E78", onchain:"#3B6D11", social:"#8A5A0B"};
+  const FACTOR_MAX  = {timing:25, tvl:20, investors:20, team:15, onchain:15, social:5};
+  function factorStrip(p){
+    const f = p.factors; if(!f) return "";
+    const total = Object.values(f).reduce((a,b)=>a+(b||0),0) || 1;
+    const segs = Object.entries(FACTOR_MAX).map(([k,max])=>{
+      const v = f[k] || 0;
+      if(!v) return "";
+      const live = (p.factor_sources||{})[k] && (p.factor_sources||{})[k] !== "static";
+      return `<span title="${k}: ${v}/${max}${live?" (measured live)":" (assessed)"}" style="width:${(v/total*100).toFixed(1)}%;background:${FACTOR_COLS[k]};opacity:${live?1:0.45};"></span>`;
+    }).join("");
+    return `<div class="fstrip" title="Where this score comes from. Solid segments are measured live; faded are assessed.">${segs}</div>`;
+  }
+
+  /* The full breakdown, with numbers and provenance. The strip in the
+     table shows the shape; this shows the arithmetic and, more usefully,
+     which parts are measured and which are our judgement. */
+  function factorRows(p){
+    const f = p.factors; if(!f) return "<p class='rsn-note'>No factor data.</p>";
+    return Object.entries(FACTOR_MAX).map(([k,max])=>{
+      const v = f[k] || 0;
+      const src = (p.factor_sources||{})[k] || "static";
+      const live = src !== "static";
+      return `<div class="frow">
+        <span class="frow-k">${k}</span>
+        <span class="frow-bar"><i style="width:${(v/max*100).toFixed(0)}%;background:${FACTOR_COLS[k]};opacity:${live?1:0.4};"></i></span>
+        <span class="frow-v">${v}<small>/${max}</small></span>
+        <span class="frow-s ${live?"frow-live":""}" title="${live?"Measured from live data this scan":"Assessed by research; changes rarely"}">${live?"live":"assessed"}</span>
+      </div>`;
+    }).join("");
+  }
+
+  function toggleReason(id){
+    const el = document.getElementById("rsn-" + id);
+    if(!el) return;
+    const open = el.style.display !== "none";
+    el.style.display = open ? "none" : "block";
+    const r = document.getElementById("rtog-" + id);
+    if(r) r.textContent = open ? "Show research note \u0026 factor breakdown"
+                               : "Hide research note \u0026 factor breakdown";
+  }
+  window.toggleReason = toggleReason;
+
   function row(p, locked){
     const c = conviction(p.score), sc = scoreColor(p.score);
     const tvlStr = p.tvl ? fmtTvl(p.tvl) : "\u2014";
+    /* Relative momentum. A protocol down 0.67% in a market down 4% is
+       GAINING share — which is a farming signal, and the opposite of
+       what the raw number suggests. The engine has computed this every
+       scan since the momentum rewrite and nothing displayed it. */
+    const rel = p.tvl_change_7d_relative, abs7 = p.tvl_change_7d;
+    const momentum = (rel === undefined || rel === null) ? "" :
+      `<div class="mom ${rel >= 0 ? "mom-up" : "mom-down"}" title="7-day TVL change of ${
+         abs7 === null || abs7 === undefined ? "n/a" : (abs7 > 0 ? "+" : "") + abs7 + "%"
+       }, measured against the market median rather than in isolation">${
+         rel >= 0 ? "+" : ""}${rel.toFixed(1)}% vs mkt</div>`;
     const ev = evidenceLabel(p.confidence), tr = trend(p.id);
     const arrow = tr && tr.dir !== "flat"
       ? `<span style="font-size:11px;color:${tr.dir==="up"?"#639922":"#B4451A"};margin-left:5px;">${tr.dir==="up"?"\u25B2":"\u25BC"}${Math.abs(tr.delta)}</span>` : "";
     return `<div class="protocol-row">
       <span class="p-rank">${p.rank || "\u2014"}</span>
-      <span class="p-name">${esc(p.name)} ${windowPill(p)}<span class="ev-pill ${ev.cls}" title="How much of this score rests on live measured data">${ev.text}</span></span>
+      <span class="p-name">${esc(p.name)} ${windowPill(p)}<span class="ev-pill ${ev.cls}" title="How much of this score rests on live measured data">${ev.text}</span>${factorStrip(p)}</span>
       <span class="p-chain">${esc(p.chain||"")}</span>
-      <span class="p-tvl" style="color:${p.tvl?"var(--text)":"var(--text3)"};">${tvlStr}</span>
+      <span class="p-tvl" style="color:${p.tvl?"var(--text)":"var(--text3)"};">${tvlStr}${momentum}</span>
       <div class="p-score-wrap"><div class="p-bar"><div class="p-fill" style="width:${p.score}%;background:${sc};"></div></div>
       <span class="p-num" style="color:${sc};">${p.score}</span>${arrow}</div>
       <span class="p-spark">${sparkline(p.id)}</span>
       <span class="p-conv ${convClass(c)}">${c}</span></div>
+      <div class="rsn-toggle"><button type="button" id="rtog-${p.id}" onclick="toggleReason('${p.id}')">Hide research note &amp; factor breakdown</button></div>
+      <div class="reason" id="rsn-${p.id}">
+        <div class="rsn-grid">
+          <div class="rsn-main">
+            <div class="rsn-h">What we know</div>
+            <p class="rsn-note">${esc(p.note || "No research note on file.")}</p>
+            <div class="rsn-h">How to qualify</div>
+            <p class="rsn-note">${esc(p.eligibility || "Not published.")}
+              <span class="tier-${p.eligibility_tier || "rumour"}">${(p.eligibility_tier || "unverified").toUpperCase()}</span></p>
+          </div>
+          <div class="rsn-side">
+            <div class="rsn-h">Where the score comes from</div>
+            ${factorRows(p)}
+            <div class="rsn-meta">
+              ${p.tvl ? `TVL ${fmtTvl(p.tvl)}${p.tvl_source ? " &middot; " + esc(p.tvl_source) + " endpoint" : ""}<br>` : ""}
+              ${p.entry_window === "closed" && p.entry_closed_on ? `Entry closed ${esc(p.entry_closed_on)}<br>` : ""}
+              ${p.factors_live !== undefined ? `${p.factors_live} of ${p.factors_total} factors measured live` : ""}
+            </div>
+          </div>
+        </div>
+      </div>
       ${locked
         ? `<div class="route-row locked"><span class="locked-msg">\u{1F512} How to qualify, and by when \u2014 <a href="#pricing">Standard and Pro</a></span></div>`
         : `<div class="route-row"><span class="route-label">How to qualify</span><span class="route-text">${esc(p.eligibility || "Not published.")}${p.eligibility_tier ? ` <em title="${TIER_NOTE[p.eligibility_tier]||""}">(${p.eligibility_tier})</em>` : ""}</span></div>`}`;
@@ -934,8 +1194,8 @@ async function buildTable(){
   ranked.forEach((p,i) => { html += row(p, i >= 1); });
 
   if(heldBack.length){
-    html += `<div class="held-head">Checked and held back \u2014 ${heldBack.length} protocols</div>
-      <div class="held-note">Scored, but not ranked: you cannot act on them. Shown because knowing what to ignore is worth as much as knowing what to chase.</div>`;
+    html += `<div class="held-head">Why ${heldBack.length} protocols didn\u2019t make the list</div>
+      <div class="held-note">Every one of these is scored and tracked \u2014 and deliberately not ranked, because you cannot act on it. One had already distributed, one has been trading for two years, and one has been silent since May 2025 while its users report funds they cannot withdraw. Most services would simply leave them on the board.</div>`;
     heldBack.forEach(p => {
       html += `<div class="protocol-row held">
         <span class="p-rank">\u2014</span>
@@ -993,6 +1253,11 @@ function subscribe(tier){
   }
 }
 
+/* Paint immediately from the bundled snapshot, then repaint when the
+   live scan arrives. The page previously showed "Loading live protocol
+   scores..." until a network round-trip finished — a visitor who bounces
+   in that window sees an empty product. */
+buildTable();
 loadLiveScores().then(buildTable);
 </script>
 <script data-goatcounter="https://signal333.goatcounter.com/count"
