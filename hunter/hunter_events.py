@@ -209,15 +209,33 @@ class EventLog:
         return {"total": total, "by_kind": {r["kind"]: r["n"] for r in rows}}
 
 
-def detect_events(log, previous, current, scan_id=None):
+def detect_events(log, previous, current, scan_id=None,
+                  prev_scoring_version=None, curr_scoring_version=None):
     """Diff two scans and record what materially changed.
 
     `previous` and `current` are lists of protocol dicts from the
     archive. Returns the number of events recorded.
+
+    When the scoring model itself changed between the two scans, score
+    and conviction movements are NOT recorded. A protocol did not fall
+    twelve points because anything happened to it — it fell because the
+    timing curve was rewritten. Publishing that as an observation would
+    be reporting our own internals as news, which is the failure this
+    whole product has been dug out of.
+
+    Facts about the world — distributions, deadlines, universe changes —
+    are still recorded across a model change, because they are true
+    regardless of how we score them.
     """
     prev = {protocol_key(p): p for p in (previous or [])}
     curr = {protocol_key(p): p for p in (current or [])}
     n = 0
+
+    model_changed = (
+        prev_scoring_version is not None
+        and curr_scoring_version is not None
+        and prev_scoring_version != curr_scoring_version
+    )
 
     for pid, c in curr.items():
         name = c.get("name", pid)
@@ -280,6 +298,9 @@ def detect_events(log, previous, current, scan_id=None):
 
         # Conviction crossing a threshold is meaningful where a two-point
         # score move is not — it changes whether we recommend acting
+        if model_changed:
+            continue          # score-derived events are not observations here
+
         if c.get("conviction") != p.get("conviction"):
             if log.record(CONVICTION_CHANGE,
                           f"{name} moved from {p.get('conviction')} to {c.get('conviction')}",
@@ -340,7 +361,7 @@ def backfill(log, archive_dir=None, limit=None):
     if limit:
         files = files[-limit:]
 
-    total, prev = 0, None
+    total, prev, pv = 0, None, None
     for f in files:
         try:
             d = json.loads(f.read_text())
@@ -349,9 +370,13 @@ def backfill(log, archive_dir=None, limit=None):
         curr = d.get("protocols") or []
         if not curr:
             continue
+        cv = d.get("scoring_version") or (curr[0].get("scoring_version") if curr else None)
         if prev is not None:
-            total += detect_events(log, prev, curr, scan_id=d.get("scan_id", f.stem))
-        prev = curr
+            total += detect_events(log, prev, curr,
+                                   scan_id=d.get("scan_id", f.stem),
+                                   prev_scoring_version=pv,
+                                   curr_scoring_version=cv)
+        prev, pv = curr, cv
     return total, len(files)
 
 
