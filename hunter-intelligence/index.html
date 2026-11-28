@@ -108,6 +108,7 @@ h1 em{font-style:normal;color:var(--green);}
 .rsn-grid{display:grid;grid-template-columns:1fr 260px;gap:26px;}
 .rsn-h{font-size:9px;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin:0 0 6px;}
 .rsn-main .rsn-h:not(:first-child){margin-top:14px;}
+.rsn-held{color:var(--text3);font-style:italic;}
 .rsn-note{font-size:12.5px;line-height:1.65;color:var(--text2);margin:0;}
 .tier-official{font-size:9px;background:#E2F0EE;color:#1C5B52;padding:1px 6px;border-radius:99px;margin-left:5px;letter-spacing:0.04em;}
 .tier-reported{font-size:9px;background:#F3EDE2;color:#7A5B18;padding:1px 6px;border-radius:99px;margin-left:5px;letter-spacing:0.04em;}
@@ -1183,11 +1184,20 @@ async function buildTable(){
       <div class="reason" id="rsn-${p.id}">
         <div class="rsn-grid">
           <div class="rsn-main">
+            ${locked ? `
+            <div class="rsn-h">What we know</div>
+            <p class="rsn-note rsn-held">A dated research note is on file for this
+              protocol, with its sources and the date each claim was checked.</p>
+            <div class="rsn-h">How to qualify</div>
+            <p class="rsn-note rsn-held">Held for subscribers \u2014 the route in, the
+              provenance tier, and the date it was last verified.</p>
+            ` : `
             <div class="rsn-h">What we know</div>
             <p class="rsn-note">${esc(p.note || "No research note on file.")}</p>
             <div class="rsn-h">How to qualify</div>
             <p class="rsn-note">${esc(p.eligibility || "Not published.")}
               <span class="tier-${p.eligibility_tier || "rumour"}">${(p.eligibility_tier || "unverified").toUpperCase()}</span></p>
+            `}
           </div>
           <div class="rsn-side">
             <div class="rsn-h">Where the score comes from</div>
@@ -1201,7 +1211,7 @@ async function buildTable(){
         </div>
       </div>
       ${locked
-        ? `<div class="route-row locked"><span class="locked-msg">\u{1F512} How to qualify, and by when \u2014 <a href="#pricing">Standard and Pro</a></span></div>`
+        ? `<div class="route-row locked"><span class="locked-msg">\u{1F512} How to qualify, and by when \u2014 <a href="#pricing">subscribe</a></span></div>`
         : `<div class="route-row"><span class="route-label">How to qualify</span><span class="route-text">${esc(p.eligibility || "Not published.")}${p.eligibility_tier ? ` <em title="${TIER_NOTE[p.eligibility_tier]||""}">(${p.eligibility_tier})</em>` : ""}</span></div>`}`;
   }
 
